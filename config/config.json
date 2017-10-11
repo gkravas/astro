@@ -1,0 +1,30 @@
+{
+  "db": {
+    "dev": {
+      "username": "astro",
+      "password": "mEsWAka3esWad5umA?A#",
+      "database": "astro",
+      "host": "127.0.0.1",
+      "dialect": "mysql"
+    },
+    "test": {
+      "username": "astro",
+      "password": "mEsWAka3esWad5umA?A#",
+      "database": "astro",
+      "host": "127.0.0.1",
+      "dialect": "mysql"
+    },
+    "production": {
+      "username": "astro",
+      "password": "mEsWAka3esWad5umA?A#",
+      "database": "astro",
+      "host": "127.0.0.1",
+      "dialect": "mysql"
+    }
+  },
+  "jwt": {
+    "secret": "yaejpf7EaU7YuRXHPsi9",
+    "tokenExpiration": 31536000,
+    "googleAPIKEY": "AIzaSyBQJ6-LGJw_nsdGuGWahAILcaC4Ij0s1dw"
+  }
+}
