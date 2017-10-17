@@ -52,21 +52,14 @@ class Person {
                 // defaults to "now"
                 dt = new Date().toISOString();
             }
-            // deal with the type of location submitted
-            if (typeof location === "string") {
-                loc = yield this.getLatLon(location);
+            if (location.lat < -90 || location.lat > 90) {
+                throw new RangeError("Latitude must be between -90 and 90");
             }
-            else {
-                // make sure latitude was valid
-                if (location.lat < -90 || location.lat > 90) {
-                    throw new RangeError("Latitude must be between -90 and 90");
-                }
-                // make sure longitude was valid
-                if (location.lng < -180 || location.lng > 180) {
-                    throw new RangeError("Longitude must be between -180 and 180");
-                }
-                loc = location;
+            // make sure longitude was valid
+            if (location.lng < -180 || location.lng > 180) {
+                throw new RangeError("Longitude must be between -180 and 180");
             }
+            loc = location;
             return new Person(name, dt, loc);
         });
     }

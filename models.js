@@ -85,6 +85,10 @@ module.exports = function(config) {
             type: Sequelize.STRING,
             allowNull: false
         },
+        coordinates: {
+            type: Sequelize.GEOMETRY('POINT'),
+            allowNull: false
+        },
         timezoneMinutesDifference: {
             type: Sequelize.INTEGER,
             allowNull: false
@@ -116,38 +120,32 @@ module.exports = function(config) {
     User.hasMany(NatalDate, {foreignKey: 'userId', sourceKey: 'id'});
     NatalDate.belongsTo(User, {foreignKey: 'userId', targetKey: 'id'});
 
-    const Explanation = sql.define('explanation', {
-        type: {
-            type:   Sequelize.ENUM,
-            values: ['daily', 'monthly', 'yearly'],
-            allowNull: false,
-            unique: 'compositeIndex'
-        },
+    const DailyPlanetAspectExplanation = sql.define('dailyPlanetAspectExplanation', {
         variation: {
             type: Sequelize.INTEGER,
             allowNull: false,
             unique: 'compositeIndex'
         },
-        inneerPlanet: {
+        natalPlanet: {
             type:   Sequelize.ENUM,
             values: ['sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter'],
             allowNull: false,
             unique: 'compositeIndex'
         },
-        outerPlanet: {
+        dayPlanet: {
             type:   Sequelize.ENUM,
             values: ['sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter'],
             allowNull: false,
             unique: 'compositeIndex'
         },
         aspect: {
-            type:   Sequelize.ENUM,
-            values: ['sun', 'moon', 'venus', 'mars'],
+            type:   Sequelize.INTEGER,
+            values: [0, 30, 45, 60, 90, 120, 135, 150, 180],
             allowNull: false,
             unique: 'compositeIndex'
         },
         lemma: {
-            type: Sequelize.STRING,
+            type: Sequelize.TEXT,
             allowNull: false
         }
     }, {
@@ -157,7 +155,7 @@ module.exports = function(config) {
     });
 
     const DailyPrediction = sql.define('dailyPrediction', {
-        id: { 
+        userId: { 
             type: Sequelize.BIGINT, 
             allowNull: false,
             primaryKey: true,
@@ -172,14 +170,22 @@ module.exports = function(config) {
             type: Sequelize.DATE,
             allowNull: false
         },
-        timezone: {
+        date: {
+            type: Sequelize.DATE,
+            allowNull: false
+        },
+        coordinates: {
+            type: Sequelize.GEOMETRY('POINT'),
+            allowNull: false
+        },
+        timezoneMinutesDifference: {
             type: Sequelize.INTEGER,
             allowNull: false
         },
         views: {
             type: Sequelize.BIGINT,
             allowNull: false,
-            defaultValue: 1
+            defaultValue: 0
         },
         accurate: {
             type: Sequelize.BOOLEAN,
@@ -199,7 +205,7 @@ module.exports = function(config) {
         sequelize: sql,
         User: User,
         NatalDate: NatalDate,
-        Explanation: Explanation,
+        DailyPlanetAspectExplanation: DailyPlanetAspectExplanation,
         DailyPrediction: DailyPrediction,
     }
 }

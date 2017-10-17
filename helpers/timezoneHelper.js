@@ -5,14 +5,18 @@ const ExternalServiceError = require('../errors/ExternalServiceError.js');
 module.exports = function(config){
     function getTimezone(city) {
         return Person.getLatLon(city)
-            .then(function(location) {
-                return Person.getTimezone(location);
-            })
-            .then(function(timezone) {
-                if (!timezone) {
-                    throw new ExternalServiceError("timezone error", "timezone not found");
-                }
-                return timezone;
+            .then(function(coordinates) {
+                return Person.getTimezone(coordinates)
+                    .then(function(timezone) {
+                        if (!timezone) {
+                            throw new ExternalServiceError("timezone error", "timezone not found");
+                        }
+
+                        return Promise.resolve({
+                            timezoneMinutesDifference: timezone,
+                            coordinates: [coordinates.lat, coordinates.lng]
+                        });
+                    });
             })
             .catch(function(error) {
                 throw new ExternalServiceError("timezone error", "timezone not found");

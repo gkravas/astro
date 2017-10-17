@@ -63,10 +63,10 @@ module.exports = function(config, app, models){
             }, {transaction: t})
                 .then(function(user) {
                     return timezoneHelper.getTimezone(req.body.birthLocation)
-                        .then(function(timezoneMinutesDifference) {
+                        .then(function(location) {
                             return {
                                 user: user,
-                                timezoneMinutesDifference: timezoneMinutesDifference,
+                                location: location,
                             }
                         });
                 })
@@ -77,13 +77,15 @@ module.exports = function(config, app, models){
                         userId: args.user.id,
                         date: req.body.birthDate,
                         location: req.body.birthLocation,
-                        timezoneMinutesDifference: args.timezoneMinutesDifference,
+                        coordinates: { type: 'Point', coordinates: args.location.coordinates},
+                        timezoneMinutesDifference: args.location.timezoneMinutesDifference,
                         primary: true
                     };
+                    
                     if (req.body.type) {
                         model.type = req.body.type;
                     }
-
+                    
                     return models.NatalDate.create(model, {transaction: t})
                         .then(function(natalDate) {
                             args.user.addNatalDate(natalDate);
@@ -96,7 +98,6 @@ module.exports = function(config, app, models){
         .catch(function(err) {
             if (err instanceof ExternalServiceError) {
                 res.status(400).send({ errors: [err] });
-                
             } else {
                 res.status(400).send({ errors: err.errors});
             }

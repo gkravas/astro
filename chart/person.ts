@@ -75,7 +75,7 @@ export class Person {
      * @param  {Point | string}  location Either an address or a lat/lng combination
      * @return {Promise<Person>}          The Person object that was created
      */
-    static async create(name: string, date: Date | string, location: Point | string): Promise<Person> {
+    static async create(name: string, date: Date | string, location: Point): Promise<Person> {
 
         let dt: string,
             loc: Point;
@@ -100,20 +100,14 @@ export class Person {
             dt = new Date().toISOString();
         }
 
-        // deal with the type of location submitted
-        if (typeof location === "string") {
-            loc = await this.getLatLon(location);
-        } else {
-            // make sure latitude was valid
-            if (location.lat < -90 || location.lat > 90) {
-                throw new RangeError("Latitude must be between -90 and 90");
-            }
-            // make sure longitude was valid
-            if (location.lng < -180 || location.lng > 180) {
-                throw new RangeError("Longitude must be between -180 and 180");
-            }
-            loc = location;
+        if (location.lat < -90 || location.lat > 90) {
+            throw new RangeError("Latitude must be between -90 and 90");
         }
+        // make sure longitude was valid
+        if (location.lng < -180 || location.lng > 180) {
+            throw new RangeError("Longitude must be between -180 and 180");
+        }
+        loc = location;
 
         return new Person(name, dt, loc);
     }

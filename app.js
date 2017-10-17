@@ -5,6 +5,8 @@ const authenticate = expressJwt({secret : config.jwt.secret});
 const bodyParser = require('body-parser');
 const models = require('./models')(config);
 const authController = require('./controllers/authController');
+const natalDateController = require('./controllers/natalDateController');
+const dailyController = require('./controllers/dailyController');
 
 
 const app = express();
@@ -26,11 +28,9 @@ app.use(allowCrossDomain);
 //app.use(require('cookie-parser')());
 //app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
 
-app.use('/api/v1/auth',  authController(config, app, models));
-
-app.get('/me', authenticate, function(req, res) {
-    res.status(200).json(req.user);
-});
+app.use('/api/v1/auth', authController(config, app, models));
+app.use('/api/v1', authenticate, natalDateController(config, app, models));
+app.use('/api/v1', authenticate, dailyController(config, app, models));
 
 app.listen(3000, function () {
     console.log('Example app listening on port 3000!')

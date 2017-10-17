@@ -198,7 +198,7 @@ class Chart {
     static getChartData(date, p) {
         return __awaiter(this, void 0, void 0, function* () {
             // path to ephemeris data       
-            swisseph.swe_set_ephe_path(path.resolve('../../../../jplfiles'));
+            swisseph.swe_set_ephe_path(path.resolve('../jplfiles'));
             const flag = swisseph.SEFLG_SPEED | swisseph.SEFLG_JPLEPH;
             let d = new Date(date);
             let minutes = d.getUTCMinutes() / 60;
@@ -215,7 +215,7 @@ class Chart {
                     r: swissephPlanet.longitudeSpeed < 0 ? -1 : 1
                 };
             }
-            planets['south node'].lon = (planets['south node'].lon + 180) % 360;
+            planets['north node'].lon = (planets['south node'].lon + 180) % 360;
             let extra = swisseph.swe_houses(julday_ut, p.lat, p.lng, 'P');
             let result = {
                 planets: planets,

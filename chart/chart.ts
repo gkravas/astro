@@ -228,7 +228,7 @@ export class Chart {
      */
     static async getChartData(date: string, p: Point): Promise<ChartData> {
         // path to ephemeris data       
-        swisseph.swe_set_ephe_path (path.resolve('../../../../jplfiles'));
+        swisseph.swe_set_ephe_path (path.resolve('../jplfiles'));
         const flag = swisseph.SEFLG_SPEED | swisseph.SEFLG_JPLEPH;
 
         let d = new Date(date)
@@ -248,7 +248,7 @@ export class Chart {
             r: swissephPlanet.longitudeSpeed < 0 ? -1 : 1
           }
         }
-        planets['south node'].lon = (planets['south node'].lon + 180) % 360
+        planets['north node'].lon = (planets['south node'].lon + 180) % 360
 
         let extra = swisseph.swe_houses(julday_ut, p.lat, p.lng, 'P');
         let result: ChartData = {
