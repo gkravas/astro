@@ -44,6 +44,9 @@ module.exports = function(config) {
             beforeCreate: function(user, options) {
                 user.password = user.generateHash(user.password)
             },
+            beforeUpdate: function(user, options) {
+                user.password = user.generateHash(user.password)
+            },
         }
     });
 
@@ -117,8 +120,8 @@ module.exports = function(config) {
         }
     });
 
-    User.hasMany(NatalDate, {foreignKey: 'userId', sourceKey: 'id'});
-    NatalDate.belongsTo(User, {foreignKey: 'userId', targetKey: 'id'});
+    User.NatalDates = User.hasMany(NatalDate, {foreignKey: 'userId', sourceKey: 'id'});
+    NatalDate.User = NatalDate.belongsTo(User, {foreignKey: 'userId', targetKey: 'id'});
 
     const DailyPlanetAspectExplanation = sql.define('dailyPlanetAspectExplanation', {
         variation: {
@@ -144,6 +147,10 @@ module.exports = function(config) {
             allowNull: false,
             unique: 'compositeIndex'
         },
+        title: {
+            type: Sequelize.TEXT,
+            allowNull: false
+        },
         lemma: {
             type: Sequelize.TEXT,
             allowNull: false
@@ -168,11 +175,8 @@ module.exports = function(config) {
         },
         date: {
             type: Sequelize.DATE,
-            allowNull: false
-        },
-        date: {
-            type: Sequelize.DATE,
-            allowNull: false
+            allowNull: false,
+            unique: 'compositeIndex',
         },
         coordinates: {
             type: Sequelize.GEOMETRY('POINT'),
@@ -199,7 +203,7 @@ module.exports = function(config) {
     });
 
     NatalDate.hasMany(DailyPrediction, {foreignKey: 'natalDateId', sourceKey: 'id'});
-    DailyPrediction.belongsTo(NatalDate, {foreignKey: 'natalDateId', targetKey: 'id'});
+    DailyPrediction.NatalDates = DailyPrediction.belongsTo(NatalDate, {foreignKey: 'natalDateId', targetKey: 'id'});
 
     return {
         sequelize: sql,

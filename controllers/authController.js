@@ -1,5 +1,5 @@
 'use strict';
-module.exports = function(config, app, models){
+module.exports = function(config, app, models, emailService, authenticate){
     const express = require('express');
     const passport = require('passport');
     const jwt = require('jsonwebtoken');
@@ -50,6 +50,39 @@ module.exports = function(config, app, models){
         });
     }
     
+    router.post('/resetPassword', authenticate, function(req, res) {
+        if (!req.user.resetPassword) {
+            res.status(400).send({});
+            return;
+        }
+
+        models.User.findOne({
+            where: {
+                email: req.user.email
+            }
+        })
+        .then((user) => {
+            user.password = req.body.password;
+            return user.save();
+        })
+        .then((user) => {
+            res.status(200).json({});
+        })
+        .catch(function(err) {
+            res.status(400).send({});
+        });
+    });
+
+    router.post('/sendResetEmail', function(req, res) {
+        Promise.resolve(emailService.sendResetEmail(req.body.email))
+            .then((user) => {
+                res.status(200).json({});
+            })
+            .catch(function(err) {
+                res.status(400).send({});
+            });
+    });
+
     router.post('/login', passport.authenticate(  
         'local', {
           session: false
@@ -86,16 +119,15 @@ module.exports = function(config, app, models){
                         model.type = req.body.type;
                     }
                     
-                    return models.NatalDate.create(model, {transaction: t})
-                        .then(function(natalDate) {
-                            args.user.addNatalDate(natalDate);
-                        });
+                    return models.NatalDate.create(model, {transaction: t});
                 });
         })
         .then(function(natalDate) {
+            emailService.sendRegisterEmail(req.body.email);
             res.status(201).json({});
         })
         .catch(function(err) {
+            console.log(err);
             if (err instanceof ExternalServiceError) {
                 res.status(400).send({ errors: [err] });
             } else {

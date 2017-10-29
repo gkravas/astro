@@ -24,7 +24,15 @@
   },
   "jwt": {
     "secret": "yaejpf7EaU7YuRXHPsi9",
-    "tokenExpiration": 31536000,
+    "tokenExpiration": "7d",
+    "resetPasswordTokenExpiration": "30m",
     "googleAPIKEY": "AIzaSyBQJ6-LGJw_nsdGuGWahAILcaC4Ij0s1dw"
+  },
+  "email": {
+    "username": "hello@astrolucis.gr",
+    "password": "9m7Wu_N-Q9@naB7s"
+  },
+  "website": {
+    "baseURL": "http://localhost:4200"
   }
 }
