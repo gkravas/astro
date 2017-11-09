@@ -2,7 +2,7 @@
 module.exports = function(config, app, models) {
     const express = require('express');
     const router = express.Router();
-    const InternalError = require('../errors/InternalError.js');
+    const ServiceError = require('../errors/serviceError.js');
 
     router.get('/natalDate', function(req, res) {
         const userId = req.user.id;
@@ -12,9 +12,9 @@ module.exports = function(config, app, models) {
                 res.status(201).json(natalDates.map(formatModel));
             })
             .catch(function(err) {
-                console.error(err)
+                logger.log({ level: 'error', message: err });
                 res.status(400).send({ 
-                    errors: [new InternalError("API error", "Natal dates not found")]
+                    errors: [new ServiceError("API error", "Natal dates not found", "")]
                 });
             });
     });

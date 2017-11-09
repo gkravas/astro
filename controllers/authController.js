@@ -1,11 +1,13 @@
 'use strict';
-module.exports = function(config, app, models, emailService, authenticate){
+module.exports = function(config, app, models, emailService, authenticate, logger){
     const express = require('express');
     const passport = require('passport');
     const jwt = require('jsonwebtoken');
     const LocalStrategy = require('passport-local').Strategy;
     const timezoneHelper = require('../helpers/timezoneHelper')();
-    const ExternalServiceError = require('../errors/ExternalServiceError.js');
+    const ExternalServiceError = require('../errors/externalServiceError.js').ExternalServiceError;
+    const ServiceError = require('../errors/serviceError.js').ServiceError;
+    const Sequelize = require('sequelize');
 
     const router = express.Router();
 
@@ -36,7 +38,11 @@ module.exports = function(config, app, models, emailService, authenticate){
 
     function generateToken(req, res, next) {
         req.token = jwt.sign({
-            id: req.user.id
+            id: req.user.id,
+            apps: {
+                android: config.apps.android,
+                iOS: config.apps.iOS,
+            }
         }, config.jwt.secret, {
             expiresIn: config.jwt.tokenExpiration
         });
@@ -45,8 +51,12 @@ module.exports = function(config, app, models, emailService, authenticate){
     
     function respond(req, res) { 
         res.status(200).json({
-          user: req.user.toJSON(),
-          token: req.token
+            user: req.user.toJSON(),
+            apps: {
+                android: config.apps.android,
+                iOS: config.apps.iOS,
+            },
+            token: req.token
         });
     }
     
@@ -127,11 +137,14 @@ module.exports = function(config, app, models, emailService, authenticate){
             res.status(201).json({});
         })
         .catch(function(err) {
-            console.log(err);
-            if (err instanceof ExternalServiceError) {
-                res.status(400).send({ errors: [err] });
+            if (err instanceof Sequelize.ValidationError) {
+                var e = err.errors[0];
+                res.status(400).send({ error: new ServiceError(e.type, e.message, e.path) });
+            } else if (err instanceof ExternalServiceError) {
+                res.status(400).send({ error: err });
             } else {
-                res.status(400).send({ errors: err.errors});
+                logger.error(err);
+                res.status(400).send({ error: new ServiceError('UnknownError') });
             }
         });
     });

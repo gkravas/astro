@@ -1,7 +1,7 @@
 'use strict';
 const Person = require("../chart/js/person").Person
 const Sequelize = require('sequelize');
-const ExternalServiceError = require('../errors/ExternalServiceError.js');
+import {ExternalServiceError} from '../errors/externalServiceError';
 module.exports = function(config){
     function getTimezone(city) {
         return Person.getLatLon(city)

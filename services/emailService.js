@@ -1,5 +1,5 @@
 'use strict';
-module.exports = function(config, models) {
+module.exports = function(config, models, logger) {
 
     const nodemailer = require('nodemailer');
     const jwt = require('jsonwebtoken');
@@ -18,10 +18,10 @@ module.exports = function(config, models) {
     function sendMail(mailOptions) {
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
-                console.error(error);
+                logger.log({ level: 'error', message: error });
                 throw error;
             } else {
-                console.info(info);
+                logger.log({ level: 'info', message: info });
             }
         });
     }

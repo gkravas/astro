@@ -34,5 +34,9 @@
   },
   "website": {
     "baseURL": "http://localhost:4200"
+  },
+  "apps": {
+    "android": "1.0.0",
+    "iOS": "1.0.0"
   }
 }

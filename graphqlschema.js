@@ -1,10 +1,11 @@
 import {Sequelize} from 'sequelize';
 import {resolver, attributeFields, typeMapper} from 'graphql-sequelize';
-import {GraphQLType, GraphQLObjectType, GraphQLNonNull, GraphQLList, GraphQLSchema, GraphQLInt, GraphQLString} from 'graphql';
+import {GraphQLType, GraphQLObjectType, GraphQLNonNull, GraphQLList,
+    GraphQLSchema, GraphQLInt, GraphQLString, GraphQLInputObjectType} from 'graphql';
 import {DailyPredictionService} from './services/dailyPredictionService';
 
-function init(models) {
-    const dailyPredictionService = new DailyPredictionService(models);
+function init(models, logger) {
+    const dailyPredictionService = new DailyPredictionService(models, logger);
 
     typeMapper.mapType((type) => {
         if (type instanceof Sequelize.GEOMETRY) {
@@ -20,6 +21,7 @@ function init(models) {
         fields: attributeFields(models.NatalDate, {
             only: ['id', 'name', 'primary']
         })
+        
     });
 
     let dailyPlanetAspectExplanationType = new GraphQLObjectType({
@@ -32,13 +34,6 @@ function init(models) {
         name: 'DailyPredection',
         description: 'A daily prediction',
         fields: {
-            natalDate: {
-                type: natalDateType,
-                description: 'Natal date id for the daily prediction',
-                resolve: resolver(models.DailyPrediction.NatalDates, {
-                    separate: false
-                })
-            },
             date: {
                 type: GraphQLString,
                 description: 'Date of the daily prediction',
@@ -54,9 +49,9 @@ function init(models) {
             planetExplanations: {
                 type: new GraphQLList(dailyPlanetAspectExplanationType),
                 description: 'Explanation list for the daily prediction',
-                resolve: function(parent, args, context) {
+                resolve: (dailyPrediction, args, context) => {
                     return dailyPredictionService
-                        .getDailyPrediction(context.user.id, parent.natalDateId, parent.date)
+                        .getDailyPredictionExplanations(dailyPrediction)
                 }
             }
         }
@@ -77,12 +72,48 @@ function init(models) {
             natalDates: {
                 type: new GraphQLList(natalDateType),
                 description: 'Natal dates of the user.',
-                resolve: resolver(models.User.NatalDates, {
-                    separate: false
-                })
+                args: {
+                    id: {
+                        type: GraphQLInt
+                    },
+                },
+                resolve: (user, { id }, context) => {
+                    if (id) {
+                        return models.NatalDate.findOne({
+                            where: {
+                                id: id,
+                                userId: user.id
+                            }
+                        }).then(natalDate => {
+                            return [natalDate];
+                        })
+                    } else {
+                        return models.NatalDate.findAll({
+                            where: {
+                                userId: user.id
+                            }
+                        })
+                    }
+                }
             }
         }
     });
+
+    let RateDailyPredectionAccuracyType = new GraphQLInputObjectType({
+        name: 'RateDailyPredectionAccuracyInput',
+        fields: () => ({
+            natalDateId: {
+                type: new GraphQLNonNull(GraphQLInt)
+            },
+            date: {
+                type: new GraphQLNonNull(GraphQLString)
+            },
+            accuracy: {
+                description: 'Accuracy of daily prediction valid value 0 to 100',
+                type: new GraphQLNonNull(GraphQLInt)
+            }
+        })
+      });
 
     let schema = new GraphQLSchema({
         query: new GraphQLObjectType({
@@ -107,20 +138,35 @@ function init(models) {
                             type: new GraphQLNonNull(GraphQLInt)
                         },
                         date: {
+                            description: 'Format must be YYYY-MM-DD',
                             type: new GraphQLNonNull(GraphQLString)
-                        },
+                        }
                     },
-                    resolve: resolver(models.DailyPrediction, {
-                        before: (findOptions, args, context) => {
-                            findOptions.where = {
-                              userId: context.user.id,
-                              natalDateId: args.natalDateId,
-                              date: args.date
-                            };
-                          }
-                    })
+                    resolve: (root, {natalDateId, date}, context) => {
+                        return dailyPredictionService
+                            .getDailyPrediction(context.user.id, natalDateId, date)
+                    }
                 }
             }
+        }),
+        mutation: new GraphQLObjectType({
+            name: 'AstroLucisMutations',
+            description: 'Queries that can alter data',
+            fields: () => ({
+                rateDailyPredectionAccuracy: {
+                    type: dailyPredictionType,
+                    description: 'Rate daily predictions accuracy',
+                    args: {
+                        input: {
+                            type: RateDailyPredectionAccuracyType   
+                        }
+                    },
+                    resolve: function(parent, args, context) {
+                        return dailyPredictionService
+                            .rateDailyPrediction(context.user.id, args.input.natalDateId, args.input.date, args.input.accuracy)
+                    }
+                }
+            })
         })
     });
 

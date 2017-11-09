@@ -105,6 +105,11 @@ module.exports = function(config) {
             type: Sequelize.BOOLEAN,
             allowNull: false,
             defaultValue: false
+        },
+        secondart: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
         }
     }, {
         version: true,
@@ -171,11 +176,13 @@ module.exports = function(config) {
         natalDateId: {
             type: Sequelize.BIGINT,
             allowNull: false,
+            primaryKey: true,
             unique: 'compositeIndex',
         },
         date: {
-            type: Sequelize.DATE,
+            type: Sequelize.STRING,
             allowNull: false,
+            primaryKey: true,
             unique: 'compositeIndex',
         },
         coordinates: {
@@ -191,10 +198,10 @@ module.exports = function(config) {
             allowNull: false,
             defaultValue: 0
         },
-        accurate: {
-            type: Sequelize.BOOLEAN,
-            allowNull: false,
-            defaultValue: false
+        accuracy: {
+            type: Sequelize.INTEGER,
+            allowNull: true,
+            validate: { min: 0, max: 100 }
         }
     }, {
         version: true,
@@ -203,7 +210,7 @@ module.exports = function(config) {
     });
 
     NatalDate.hasMany(DailyPrediction, {foreignKey: 'natalDateId', sourceKey: 'id'});
-    DailyPrediction.NatalDates = DailyPrediction.belongsTo(NatalDate, {foreignKey: 'natalDateId', targetKey: 'id'});
+    DailyPrediction.NatalDate = DailyPrediction.belongsTo(NatalDate, {foreignKey: 'natalDateId', targetKey: 'id'});
 
     return {
         sequelize: sql,

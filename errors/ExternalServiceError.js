@@ -1,8 +1,9 @@
-class ExternalServiceError extends Error {
+export class ExternalServiceError extends Error {
     constructor(type, message) {
       super(message);
       this.type = type;
       this.name = 'ExternalServiceError';
+      this.constructor = ExternalServiceError 
     }
     toJSON() {
         return {
@@ -12,4 +13,4 @@ class ExternalServiceError extends Error {
         }
     }
 }
-module.exports = ExternalServiceError;
+ExternalServiceError.prototype = Error.prototype;

@@ -14,7 +14,7 @@ module.exports = function(config) {
     function getDailyPrediction(natalDate, dailyPrediction) {
         return Person.create("natal date", natalDate.date, dbPointToLatLng(natalDate.coordinates))
             .then(person => {
-                return Person.create("transits day", dailyPrediction.date, dbPointToLatLng(dailyPrediction.coordinates))
+                return Person.create("transits day", new moment(dailyPrediction.date, 'YYYY-MM-DD').toISOString(), dbPointToLatLng(dailyPrediction.coordinates))
                     .then(dayPersonSimulation => {
                         return ChartFactory.create("transits", person, dayPersonSimulation, astrology.ChartType.Transits);
                     });
