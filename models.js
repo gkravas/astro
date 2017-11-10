@@ -105,11 +105,6 @@ module.exports = function(config) {
             type: Sequelize.BOOLEAN,
             allowNull: false,
             defaultValue: false
-        },
-        secondart: {
-            type: Sequelize.BOOLEAN,
-            allowNull: false,
-            defaultValue: false
         }
     }, {
         version: true,
