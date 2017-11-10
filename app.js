@@ -1,6 +1,9 @@
+import 'babel-polyfill'
+
+const config = require('./config/index');
+
 import { logger } from './helpers/logger';
 const compression = require('compression')
-const config = require("./config/config.json");
 const express = require('express');
 const expressJwt = require('express-jwt');  
 const authenticate = expressJwt({secret : config.jwt.secret});
@@ -39,3 +42,5 @@ app.listen(3579, function () {
         message: 'AstroQL listening on port 3579!'
     });
 });
+
+module.exports = app;

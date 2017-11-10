@@ -1,0 +1,1 @@
+const environment = process.env.ENV || 'development'

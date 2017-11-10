@@ -1,10 +1,12 @@
 'use strict';
+import moment from 'moment';
+
 module.exports = function(config, app, models, emailService, authenticate, logger){
     const express = require('express');
     const passport = require('passport');
     const jwt = require('jsonwebtoken');
     const LocalStrategy = require('passport-local').Strategy;
-    const timezoneHelper = require('../helpers/timezoneHelper')();
+    const timezoneHelper = require('../helpers/timezoneHelper')(config, logger);
     const ExternalServiceError = require('../errors/externalServiceError.js').ExternalServiceError;
     const ServiceError = require('../errors/serviceError.js').ServiceError;
     const Sequelize = require('sequelize');
@@ -114,6 +116,11 @@ module.exports = function(config, app, models, emailService, authenticate, logge
                         });
                 })
                 .then(function(args) {
+                    const date = moment(req.body.birthDate, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD HH:mm:ss');
+                    if (date !== req.body.birthDate) {
+                        throw new ServiceError('format violation', "Wrong date format should be 'YYYY-MM-DD HH:mm:ss'", 'birthDate');
+                    }
+                    
                     var model = {
                         id: 0,
                         name: 'me',
@@ -124,11 +131,9 @@ module.exports = function(config, app, models, emailService, authenticate, logge
                         timezoneMinutesDifference: args.location.timezoneMinutesDifference,
                         primary: true
                     };
-                    
                     if (req.body.type) {
                         model.type = req.body.type;
                     }
-                    
                     return models.NatalDate.create(model, {transaction: t});
                 });
         })
@@ -137,7 +142,9 @@ module.exports = function(config, app, models, emailService, authenticate, logge
             res.status(201).json({});
         })
         .catch(function(err) {
-            if (err instanceof Sequelize.ValidationError) {
+            if (err instanceof ServiceError) {
+                res.status(400).send({ error: err });
+            } else if (err instanceof Sequelize.ValidationError) {
                 var e = err.errors[0];
                 res.status(400).send({ error: new ServiceError(e.type, e.message, e.path) });
             } else if (err instanceof ExternalServiceError) {

@@ -2,7 +2,7 @@
 module.exports = function(config) {
     const Sequelize = require('sequelize');
     const bcrypt = require('bcrypt');
-    const dbConfig = config.db.dev;
+    const dbConfig = config.db;
 
     const sql = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, {
         host: dbConfig.host,
@@ -82,7 +82,10 @@ module.exports = function(config) {
         },
         date: { 
             type: Sequelize.DATE,
-            allowNull: false
+            allowNull: false,
+            validate: {
+                isDate: true
+            }
         },
         location: {
             type: Sequelize.STRING,
@@ -99,7 +102,10 @@ module.exports = function(config) {
         type: {
             type:   Sequelize.ENUM,
             values: ['male', 'female', 'freeSpirit', 'unknown'],
-            defaultValue: 'unknown'
+            defaultValue: 'unknown',
+            validate: {
+                isIn: [['male', 'female', 'freeSpirit', 'unknown']],
+            }
         },
         primary: {
             type: Sequelize.BOOLEAN,
