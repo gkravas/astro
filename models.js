@@ -149,9 +149,12 @@ module.exports = function(config) {
         },
         aspect: {
             type:   Sequelize.INTEGER,
-            values: [0, 30, 45, 60, 90, 120, 135, 150, 180],
+            values: [0, 30, 45, 60, 72, 90, 120, 135, 150, 180],
             allowNull: false,
-            unique: 'compositeIndex'
+            unique: 'compositeIndex',
+            validate: {
+                isIn: [[0, 30, 45, 60, 72, 90, 120, 135, 150, 180]],
+            }
         },
         title: {
             type: Sequelize.TEXT,
