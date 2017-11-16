@@ -8,7 +8,6 @@
         "watch": true
     },
     "include": [
-        "astrology.ts",
-        "test.ts"
+        "astrology.ts"
     ]
 }

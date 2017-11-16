@@ -16,10 +16,10 @@ module.exports = function(config) {
 
     const User = sql.define('user', {
         id: { 
-            type: Sequelize.BIGINT, 
-            autoIncrement: true,
+            type: Sequelize.BIGINT,
             primaryKey: true,
             allowNull: false,
+            defaultValue: 0
         },
         email: {
             type: Sequelize.STRING,
@@ -42,10 +42,14 @@ module.exports = function(config) {
         timestamps: true,
         hooks: {
             beforeCreate: function(user, options) {
-                user.password = user.generateHash(user.password)
+                return User.max('id')
+                    .then(max => {
+                        user.password = user.generateHash(user.password)
+                        user.id = (Number.isNaN(max) ? 1 : max + 1);
+                    });
             },
             beforeUpdate: function(user, options) {
-                user.password = user.generateHash(user.password)
+                user.password = user.generateHash(user.password);
             },
         }
     });

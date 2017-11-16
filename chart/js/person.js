@@ -72,7 +72,7 @@ class Person {
             return yield rp_1.default({
                 uri: "https://maps.googleapis.com/maps/api/timezone/json",
                 qs: {
-                    key: this._key,
+                    key: this.apiKey,
                     location: `${p.lat},${p.lng}`,
                     timestamp: Math.floor(Date.now() / 1000)
                 }
@@ -88,7 +88,7 @@ class Person {
             return yield rp_1.default({
                 uri: "https://maps.googleapis.com/maps/api/geocode/json",
                 qs: {
-                    key: this._key,
+                    key: this.apiKey,
                     address: address
                 }
             }).then((latlng) => {
@@ -106,5 +106,5 @@ class Person {
  * Google API key
  * @type {string}
  */
-Person._key = "AIzaSyAXnIdQxap1WQuzG0XxHfYlCA5O9GQyvuY";
+Person.apiKey = "";
 exports.Person = Person;

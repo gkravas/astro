@@ -9,8 +9,7 @@
     "jwt": {
       "secret": "yaejpf7EaU7YuRXHPsi9",
       "tokenExpiration": "7d",
-      "resetPasswordTokenExpiration": "30m",
-      "googleAPIKEY": "AIzaSyBQJ6-LGJw_nsdGuGWahAILcaC4Ij0s1dw"
+      "resetPasswordTokenExpiration": "30m"
     },
     "email": {
       "username": "hello@astrolucis.gr",
@@ -22,6 +21,9 @@
     "apps": {
       "android": "1.0.0",
       "iOS": "1.0.0"
+    },
+    "keys": {
+        "googleAPIKEY": "AIzaSyBQJ6-LGJw_nsdGuGWahAILcaC4Ij0s1dw"
     }
   }
   

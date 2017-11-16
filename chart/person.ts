@@ -58,7 +58,7 @@ export class Person {
      * Google API key
      * @type {string}
      */
-    private static _key: string = "AIzaSyAXnIdQxap1WQuzG0XxHfYlCA5O9GQyvuY";
+    public static apiKey: string = "";
 
     /**
      * Creates a Person object
@@ -120,7 +120,7 @@ export class Person {
         return await rp({
             uri: "https://maps.googleapis.com/maps/api/timezone/json",
             qs: {
-                key: this._key,
+                key: this.apiKey,
                 location: `${p.lat},${p.lng}`,
                 timestamp: Math.floor(Date.now() / 1000)
             }
@@ -138,7 +138,7 @@ export class Person {
         return await rp({
             uri: "https://maps.googleapis.com/maps/api/geocode/json",
             qs: {
-                key: this._key,
+                key: this.apiKey,
                 address: address
             }
         }).then(
