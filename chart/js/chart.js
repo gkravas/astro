@@ -106,6 +106,9 @@ class Chart {
         let planets = [];
         for (let p in cdata.planets) {
             let pd = cdata.planets[p];
+            if (!pd.name) {
+                continue;
+            }
             planets.push(new planet_1.Planet(pd.name, pd.lon, pd.lat, pd.spd));
         }
         return planets;
@@ -198,8 +201,8 @@ class Chart {
     static getChartData(date, p) {
         return __awaiter(this, void 0, void 0, function* () {
             // path to ephemeris data       
-            swisseph.swe_set_ephe_path(path.resolve('../jplfiles'));
-            const flag = swisseph.SEFLG_SPEED | swisseph.SEFLG_JPLEPH;
+            swisseph.swe_set_ephe_path(path.resolve('../swephm'));
+            const flag = swisseph.SEFLG_SPEED | swisseph.SEFLG_SWIEPH;
             let d = new Date(date);
             let minutes = d.getUTCMinutes() / 60;
             let planets = {};

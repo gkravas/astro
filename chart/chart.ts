@@ -133,6 +133,9 @@ export class Chart {
         let planets: Array<Planet> = [];
         for (let p in cdata.planets) {
             let pd = cdata.planets[p];
+            if (!pd.name) {
+                continue;
+            }
             planets.push(new Planet(pd.name, pd.lon, pd.lat, pd.spd));
         }
         return planets;
@@ -228,8 +231,8 @@ export class Chart {
      */
     static async getChartData(date: string, p: Point): Promise<ChartData> {
         // path to ephemeris data       
-        swisseph.swe_set_ephe_path (path.resolve('../jplfiles'));
-        const flag = swisseph.SEFLG_SPEED | swisseph.SEFLG_JPLEPH;
+        swisseph.swe_set_ephe_path (path.resolve('../swephm'));
+        const flag = swisseph.SEFLG_SPEED | swisseph.SEFLG_SWIEPH;
 
         let d = new Date(date)
         let minutes = d.getUTCMinutes() / 60;
