@@ -1,6 +1,7 @@
 const config = require('./config/index');
 const models = require('./models')(config);
 var fs = require('fs');
+var path = require('path');
 var parse = require('csv-parse');
 
 //models.sequelize.sync({alter: true});
@@ -8,7 +9,7 @@ models.sequelize.sync({force: true})
     .then(function() {
         var parser = parse({delimiter: ','}, function(err, data){
             var row;
-            for(i = 1; i < data.length; i++) {
+            for(var i = 1; i < data.length; i++) {
                 row = data[i];
                 models.DailyPlanetAspectExplanation.upsert({
                     variation: 1,
@@ -21,5 +22,5 @@ models.sequelize.sync({force: true})
             }
           });
           
-          fs.createReadStream(__dirname + '/data/dailyPredicitonPlanets.csv').pipe(parser);
+          fs.createReadStream(path.resolve('./data/dailyPredicitonPlanets.csv')).pipe(parser);
     });

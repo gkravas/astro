@@ -1,6 +1,6 @@
 'use strict';
 
-const app = require('../app');
+const app = require('../dist/app');
 const chai = require('chai');
 const request = require('supertest');
 const expect = chai.expect;
@@ -35,7 +35,7 @@ describe('Authorization API Integration Tests', function() {
               }); 
         });
     });
-
+    
     describe('#POST /api/v1/auth/register', function() { 
         it('user register should fail invalid date format', function(done) { 
           request(app)
@@ -194,4 +194,5 @@ describe('Authorization API Integration Tests', function() {
               }); 
         });
       });
+      
   });

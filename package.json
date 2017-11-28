@@ -4,8 +4,12 @@
   "description": "astro-express",
   "scripts": {
     "postinstall": "babel-node init.js --compilers js:babel-core/register",
-    "start": "babel-node app.js --compilers js:babel-core/register",
-    "test": "NODE_ENV=test ./node_modules/mocha/bin/mocha --compilers js:babel-core/register"
+    "test": "NODE_ENV=test ./node_modules/mocha/bin/mocha --compilers js:babel-core/register",
+    "start": "node ./dist/app.js",
+    "debug": "node --debug ./dist/app.js",
+    "clean": "rm -rf dist && mkdir dist",
+    "build": "npm run clean && npm run build-server",
+    "build-server": "babel -d ./dist ./src -s"
   },
   "author": "George Kravas",
   "license": "ISC",
@@ -46,6 +50,7 @@
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.6.0",
     "babel-preset-es2015": "^6.24.1",
+    "babel-preset-latest": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
     "chai": "^4.1.2",
     "mocha": "^4.0.1",

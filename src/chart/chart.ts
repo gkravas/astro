@@ -231,7 +231,7 @@ export class Chart {
      */
     static async getChartData(date: string, p: Point): Promise<ChartData> {
         // path to ephemeris data       
-        swisseph.swe_set_ephe_path (path.resolve('../swephm'));
+        swisseph.swe_set_ephe_path (path.resolve(__dirname + '/swephm'));
         const flag = swisseph.SEFLG_SPEED | swisseph.SEFLG_SWIEPH;
 
         let d = new Date(date)

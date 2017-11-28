@@ -201,7 +201,7 @@ class Chart {
     static getChartData(date, p) {
         return __awaiter(this, void 0, void 0, function* () {
             // path to ephemeris data       
-            swisseph.swe_set_ephe_path(path.resolve('../swephm'));
+            swisseph.swe_set_ephe_path(path.resolve(__dirname + '/swephm'));
             const flag = swisseph.SEFLG_SPEED | swisseph.SEFLG_SWIEPH;
             let d = new Date(date);
             let minutes = d.getUTCMinutes() / 60;
