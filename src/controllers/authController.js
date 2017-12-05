@@ -157,7 +157,21 @@ module.exports = function(config, app, models, emailService, authenticate, logge
         }), generateToken, respond);
     
     router.post('/fbLogin', fbLogin, generateToken, respond);
-
+    
+    router.post('/register', function(req, res) {
+        return models.User.create({
+            email: req.body.email,
+            password: req.body.password
+        })
+        .then(function(natalDate) {
+            emailService.sendRegisterEmail(req.body.email);
+            res.status(201).json({});
+        })
+        .catch(function(err) {
+            handleError(res, err);
+        });
+    });
+    /*
     router.post('/register', function(req, res) {
         models.sequelize.transaction(function (t) {
             return models.User.create({
@@ -204,6 +218,7 @@ module.exports = function(config, app, models, emailService, authenticate, logge
             handleError(res, err);
         });
     });
+    */
 
     function handleError(res, err) {
         console.log(err);

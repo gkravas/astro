@@ -1,7 +1,7 @@
 import {Sequelize} from 'sequelize';
 import {resolver, attributeFields, typeMapper} from 'graphql-sequelize';
 import {GraphQLType, GraphQLObjectType, GraphQLNonNull, GraphQLList,
-    GraphQLSchema, GraphQLInt, GraphQLString, GraphQLInputObjectType} from 'graphql';
+    GraphQLSchema, GraphQLInt, GraphQLString, GraphQLBoolean, GraphQLInputObjectType} from 'graphql';
 import {DailyPredictionService} from './services/dailyPredictionService';
 
 function init(models, logger) {
@@ -68,6 +68,10 @@ function init(models, logger) {
             email: {
                 type: GraphQLString,
                 description: 'The email of the user.',
+            },
+            accountComplete: {
+                type: GraphQLBoolean,
+                description: 'Represents if user\'s account is complete.',
             },
             natalDates: {
                 type: new GraphQLList(natalDateType),
