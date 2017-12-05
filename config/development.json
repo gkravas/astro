@@ -24,6 +24,10 @@
     },
     "keys": {
         "googleAPIKEY": "AIzaSyBQJ6-LGJw_nsdGuGWahAILcaC4Ij0s1dw"
+    },
+    "fb": {
+      "appId": "1741917992498773",
+      "appSecret": "2a914c83edd54264560f3ad50da71972"
     }
   }
   

@@ -4,7 +4,8 @@
   "description": "astro-express",
   "scripts": {
     "postinstall": "babel-node init.js --compilers js:babel-core/register",
-    "test": "NODE_ENV=test ./node_modules/mocha/bin/mocha --compilers js:babel-core/register",
+    "test": "NODE_ENV=test ./node_modules/mocha/bin/mocha",
+    "setupDB": "node ./dist/init.js",
     "start": "node ./dist/app.js",
     "debug": "node --debug ./dist/app.js",
     "clean": "rm -rf dist && mkdir dist",
@@ -29,6 +30,7 @@
     "express-jwt": "^5.3.0",
     "express-mung": "^0.4.6",
     "express-session": "^1.15.6",
+    "fb": "^2.0.0",
     "graphql": "^0.10.0",
     "graphql-relay": "^0.5.3",
     "graphql-sequelize": "^5.4.4",

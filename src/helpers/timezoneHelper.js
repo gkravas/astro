@@ -19,7 +19,6 @@ module.exports = function(config, logger){
                     });
             })
             .catch(function(error) {
-                console.log(error);
                 logger.log({
                     level: 'error',
                     message: error

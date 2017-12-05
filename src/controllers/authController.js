@@ -1,5 +1,7 @@
 'use strict';
+import util from 'util';
 import moment from 'moment';
+import {Facebook, FacebookApiException} from 'fb';
 
 module.exports = function(config, app, models, emailService, authenticate, logger){
     const express = require('express');
@@ -10,6 +12,7 @@ module.exports = function(config, app, models, emailService, authenticate, logge
     const ExternalServiceError = require('../errors/externalServiceError.js').ExternalServiceError;
     const ServiceError = require('../errors/serviceError.js').ServiceError;
     const Sequelize = require('sequelize');
+    const FB = new Facebook(config.fb);
 
     const router = express.Router();
 
@@ -41,6 +44,7 @@ module.exports = function(config, app, models, emailService, authenticate, logge
     function generateToken(req, res, next) {
         req.token = jwt.sign({
             id: req.user.id,
+            accountComplete: req.user.accountComplete,
             apps: {
                 android: config.apps.android,
                 iOS: config.apps.iOS,
@@ -54,12 +58,64 @@ module.exports = function(config, app, models, emailService, authenticate, logge
     function respond(req, res) { 
         res.status(200).json({
             user: req.user.toJSON(),
+            accountComplete: req.user.accountComplete,
             apps: {
                 android: config.apps.android,
                 iOS: config.apps.iOS,
             },
             token: req.token
         });
+    }
+
+    function getFBMe(fbToken) {
+        return new Promise(function (fulfill, reject){
+            FB.setAccessToken(fbToken);
+            FB.api('/me', 'get', { fields: 'id, email' }, function (res) {
+                if(!res || res.error) {
+                    reject(res.error);
+                }
+                fulfill(res);
+            });
+        });
+    }
+
+    function fbLogin(req, res, next) { 
+        FB.setAccessToken(req.body.fbToken);
+        return getFBMe(req.body.fbToken)
+            .then(function(fbRes) {
+                return models.User.findOne({
+                    where: {
+                        $or: [
+                            { fbId: { $eq: fbRes.id } }, { email: { $eq: fbRes.email } }
+                        ]
+                    }
+                })
+                .then((user) => {
+                    if (user) {
+                        if (!user.email) {
+                            user.email = fbRes.email;    
+                        }
+                        user.fbId = fbRes.id;
+                        user.fbToken = req.body.fbToken;
+                        return user.save();
+                    }
+                    return models.User.create({
+                        email: fbRes.email,
+                        fbId: fbRes.id,
+                        fbToken: req.body.fbToken,
+                    });
+                });
+            })
+            .then((user) => {
+                if (!user.accountComplete) {
+                    emailService.sendRegisterEmail(user.email);
+                }
+                req.user = user;
+                next();
+            })
+            .catch(function(err) {
+                handleError(res, err);
+            });
     }
     
     router.post('/resetPassword', authenticate, function(req, res) {
@@ -80,7 +136,7 @@ module.exports = function(config, app, models, emailService, authenticate, logge
         .then((user) => {
             res.status(200).json({});
         })
-        .catch(function(err) {
+        .catch((err) => {
             res.status(400).send({});
         });
     });
@@ -90,7 +146,7 @@ module.exports = function(config, app, models, emailService, authenticate, logge
             .then((user) => {
                 res.status(200).json({});
             })
-            .catch(function(err) {
+            .catch((err) => {
                 res.status(400).send({});
             });
     });
@@ -100,11 +156,14 @@ module.exports = function(config, app, models, emailService, authenticate, logge
           session: false
         }), generateToken, respond);
     
+    router.post('/fbLogin', fbLogin, generateToken, respond);
+
     router.post('/register', function(req, res) {
         models.sequelize.transaction(function (t) {
             return models.User.create({
                 email: req.body.email,
                 password: req.body.password,
+                accountComplete: true
             }, {transaction: t})
                 .then(function(user) {
                     return timezoneHelper.getTimezone(req.body.birthLocation)
@@ -142,19 +201,23 @@ module.exports = function(config, app, models, emailService, authenticate, logge
             res.status(201).json({});
         })
         .catch(function(err) {
-            if (err instanceof ServiceError) {
-                res.status(400).send({ error: err });
-            } else if (err instanceof Sequelize.ValidationError) {
-                var e = err.errors[0];
-                res.status(400).send({ error: new ServiceError(e.type, e.message, e.path) });
-            } else if (err instanceof ExternalServiceError) {
-                res.status(400).send({ error: err });
-            } else {
-                logger.error(err);
-                res.status(400).send({ error: new ServiceError('UnknownError') });
-            }
+            handleError(res, err);
         });
     });
 
+    function handleError(res, err) {
+        console.log(err);
+        if (err instanceof ServiceError) {
+            res.status(400).send({ error: err });
+        } else if (err instanceof Sequelize.ValidationError) {
+            var e = err.errors[0];
+            res.status(400).send({ error: new ServiceError(e.type, e.message, e.path) });
+        } else if (err instanceof ExternalServiceError) {
+            res.status(400).send({ error: err });
+        } else {
+            logger.error(err);
+            res.status(400).send({ error: new ServiceError('UnknownError') });
+        }
+    }
     return router;
 }

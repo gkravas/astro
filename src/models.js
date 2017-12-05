@@ -1,4 +1,6 @@
 'use strict';
+
+import { Utils } from './utils';
 module.exports = function(config) {
     const Sequelize = require('sequelize');
     const bcrypt = require('bcrypt');
@@ -35,21 +37,41 @@ module.exports = function(config) {
                 min: 6
             },
             allowNull:false
+        },
+        fbId: { 
+            type: Sequelize.BIGINT,
+            allowNull: true,
+        },
+        fbToken: { 
+            type: Sequelize.STRING,
+            allowNull: true,
+        },
+        accountComplete: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
         }
     }, {
         version: true,
         paranoid: true,
         timestamps: true,
         hooks: {
+            beforeValidate: function(user, options) {
+                if (!user.password && user.fbId && user.fbToken) {
+                    user.password = Utils.randomString(10, 'aA#!');
+                }
+            },
             beforeCreate: function(user, options) {
+                user.password = user.generateHash(user.password);
                 return User.max('id')
                     .then(max => {
-                        user.password = user.generateHash(user.password)
                         user.id = (Number.isNaN(max) ? 1 : max + 1);
                     });
             },
             beforeUpdate: function(user, options) {
-                user.password = user.generateHash(user.password);
+                if (user.changed('password')) {
+                    user.password = user.generateHash(user.password);
+                }
             },
         }
     });

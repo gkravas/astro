@@ -63,7 +63,7 @@ describe('Authorization API Integration Tests', function() {
     });
 
     describe('#POST /api/v1/auth/register', function() { 
-        it('user register should fail invalid date format', function(done) { 
+        it('user register should fail invalid user type', function(done) { 
           request(app)
               .post('/api/v1/auth/register')
               .send({
@@ -158,10 +158,11 @@ describe('Authorization API Integration Tests', function() {
               })
               .end(function(err, res) { 
                   expect(res.statusCode).to.equal(200); 
+                  expect(res.body.accountComplete).to.be.equal(true); 
                   expect(res.body).to.be.jsonSchema({
                     title: 'login user schema',
                     type: 'object',
-                    required: ['apps', 'user', 'token'],
+                    required: ['apps', 'user', 'accountComplete', 'token'],
                     properties: {
                         apps: {
                             type: 'object',
@@ -172,6 +173,9 @@ describe('Authorization API Integration Tests', function() {
                             iOS: {
                                 type: 'string'
                             },
+                        },
+                        accountComplete: {
+                            type: 'boolean'
                         },
                         token: {
                             type: 'string'
@@ -195,4 +199,75 @@ describe('Authorization API Integration Tests', function() {
         });
       });
       
+      describe('#POST /api/v1/auth/fbLogin', function() { 
+        it('user fbLogin should succeed', function(done) { 
+          request(app)
+              .post('/api/v1/auth/fbLogin')
+              .send({
+                  fbToken: 'EAAYwQZBMrtlUBAOMrsFr1sMVaAJTpthHVpyDnZA48j1hOdkYv4RsKZBfIDkN9YYYZAxFcs2wDUmMj8SxtfKHJtdw6egnl2tbE0YWibYBjhDQXRTQ4dyx5R6Iim8YRiYsMmyYia1Pp5IQuYFII5zeXtnGGw7udXC4WzH3IDItsQ4y4OebUwLrF5pZAY5gAU8mdcq0EfAl4tqanGgAqAaUwtLumeCXjghr1ZAwGo0bppkQZDZD',
+              })
+              .end(function(err, res) { 
+                expect(res.statusCode).to.equal(200); 
+                expect(res.body.accountComplete).to.be.equal(false); 
+                expect(res.body).to.be.jsonSchema({
+                  title: 'login user schema',
+                  type: 'object',
+                  required: ['apps', 'user', 'accountComplete', 'token'],
+                  properties: {
+                      apps: {
+                          type: 'object',
+                          required: ['android', 'iOS'],
+                          android: {
+                              type: 'string'
+                          },
+                          iOS: {
+                              type: 'string'
+                          },
+                      },
+                      accountComplete: {
+                          type: 'boolean'
+                      },
+                      token: {
+                          type: 'string'
+                      },
+                      user: {
+                          type: 'object',
+                          required: ['email', 'id'],
+                          properties: {
+                              email: {
+                                  type: 'string'
+                              },
+                              id: {
+                                  type: 'number'
+                              }
+                          }
+                      }
+                  }
+                }); 
+                done(); 
+              }); 
+        });
+      });
+      /*
+      describe('#POST /api/v1/auth/fbLogin', function() { 
+        it('user fbLogin should fail no email permission giver', function(done) { 
+          request(app)
+              .post('/api/v1/auth/fbLogin')
+              .send({
+                  fbToken: 'EAAYwQZBMrtlUBAHp3LlYp1N3IfXuS9HICiZA4O3T6sJ9jqdkIHsERCkrhKXokJP7ER2B4MQMTjVoOfbMGdZCvhcGXnetAvpPE8z5mAlbjXknEZAbn9eeTL1P0ZAQbeGHUguRCZACHEjCHmPwZBApimCZAuGmm8k90ZCs0Uxo5DmBG8GeqnxiZBjUMoFtrZCq6VurtZBlLyNPdrQ1B4pPWmdrKZCaw5ZALVVyl0SzTFiXwd0hr3QwZDZD',
+              })
+              .end(function(err, res) { 
+                expect(res.statusCode).to.equal(400); 
+                expect(res.body).to.be.jsonEqual({
+                    "error": {
+                        "type":"notNull Violation",
+                        "field":"email",
+                        "message": "email cannot be null",
+                        "name":"ServiceError"
+                      }
+                  }); 
+                done(); 
+              }); 
+        });
+      });*/
   });
