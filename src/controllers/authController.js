@@ -171,54 +171,6 @@ module.exports = function(config, app, models, emailService, authenticate, logge
             handleError(res, err);
         });
     });
-    /*
-    router.post('/register', function(req, res) {
-        models.sequelize.transaction(function (t) {
-            return models.User.create({
-                email: req.body.email,
-                password: req.body.password,
-                accountComplete: true
-            }, {transaction: t})
-                .then(function(user) {
-                    return timezoneHelper.getTimezone(req.body.birthLocation)
-                        .then(function(location) {
-                            return {
-                                user: user,
-                                location: location,
-                            }
-                        });
-                })
-                .then(function(args) {
-                    const date = moment(req.body.birthDate, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD HH:mm:ss');
-                    if (date !== req.body.birthDate) {
-                        throw new ServiceError('format violation', "Wrong date format should be 'YYYY-MM-DD HH:mm:ss'", 'birthDate');
-                    }
-                    
-                    var model = {
-                        id: 0,
-                        name: 'me',
-                        userId: args.user.id,
-                        date: req.body.birthDate,
-                        location: req.body.birthLocation,
-                        coordinates: { type: 'Point', coordinates: args.location.coordinates},
-                        timezoneMinutesDifference: args.location.timezoneMinutesDifference,
-                        primary: true
-                    };
-                    if (req.body.type) {
-                        model.type = req.body.type;
-                    }
-                    return models.NatalDate.create(model, {transaction: t});
-                });
-        })
-        .then(function(natalDate) {
-            emailService.sendRegisterEmail(req.body.email);
-            res.status(201).json({});
-        })
-        .catch(function(err) {
-            handleError(res, err);
-        });
-    });
-    */
 
     function handleError(res, err) {
         console.log(err);

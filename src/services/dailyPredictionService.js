@@ -2,7 +2,7 @@ import moment from 'moment';
 
 export class DailyPredictionService {
 
-    constructor(models, config, logger) {
+    constructor(config, models, logger) {
         this.models = models;
         this.chartHelper = require('../helpers/chartHelper')(config);
     }

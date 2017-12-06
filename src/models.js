@@ -143,11 +143,13 @@ module.exports = function(config) {
         paranoid: true,
         timestamps: true,
         hooks: {
-            beforeCreate: function(natalDate, options) {
-                return NatalDate.max('id', { where: { userId: natalDate.userId } })
-                .then(max => {
-                    natalDate.id = (Number.isNaN(max) ? 1 : max + 1);
-                })
+            beforeValidate: function(natalDate, options) {
+                if (!natalDate.id) {
+                    return NatalDate.max('id', { where: { userId: natalDate.userId } })
+                        .then(max => {
+                            natalDate.id = (Number.isNaN(max) ? 1 : max + 1);
+                        });
+                }
             },
         }
     });

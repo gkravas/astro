@@ -3,9 +3,11 @@ import {resolver, attributeFields, typeMapper} from 'graphql-sequelize';
 import {GraphQLType, GraphQLObjectType, GraphQLNonNull, GraphQLList,
     GraphQLSchema, GraphQLInt, GraphQLString, GraphQLBoolean, GraphQLInputObjectType} from 'graphql';
 import {DailyPredictionService} from './services/dailyPredictionService';
+import {NatalDateService} from './services/natalDateService';
 
-function init(models, logger) {
-    const dailyPredictionService = new DailyPredictionService(models, logger);
+function init(models, config, logger) {
+    const dailyPredictionService = new DailyPredictionService(config, models, logger);
+    const natalDateService = new NatalDateService(config, models, logger);
 
     typeMapper.mapType((type) => {
         if (type instanceof Sequelize.GEOMETRY) {
@@ -19,9 +21,8 @@ function init(models, logger) {
         name: 'NatalDate',
         description: 'A natal date',
         fields: attributeFields(models.NatalDate, {
-            only: ['id', 'name', 'primary']
+            only: ['id', 'name', 'date', 'location', 'primary', 'type']
         })
-        
     });
 
     let dailyPlanetAspectExplanationType = new GraphQLObjectType({
@@ -103,7 +104,7 @@ function init(models, logger) {
         }
     });
 
-    let RateDailyPredectionAccuracyType = new GraphQLInputObjectType({
+    let rateDailyPredectionAccuracyType = new GraphQLInputObjectType({
         name: 'RateDailyPredectionAccuracyInput',
         fields: () => ({
             natalDateId: {
@@ -116,6 +117,33 @@ function init(models, logger) {
                 description: 'Accuracy of daily prediction valid value 0 to 100',
                 type: new GraphQLNonNull(GraphQLInt)
             }
+        })
+      });
+
+      let natalDateInputType = new GraphQLInputObjectType({
+        name: 'NatalDateInput',
+        fields: () => ({
+            id: {
+                type: GraphQLInt
+            },
+            date: {
+                description: 'The date YYYY-MM-DD HH:mm:ss',
+                type: new GraphQLNonNull(GraphQLString)
+            },
+            name: {
+                description: 'The name',
+                type: new GraphQLNonNull(GraphQLString)
+            },
+            location: {
+                description: 'The location',
+                type: new GraphQLNonNull(GraphQLString)
+            },
+            primary: {
+                type: GraphQLBoolean
+            },
+            type: {
+                type: GraphQLString
+            },
         })
       });
 
@@ -162,12 +190,43 @@ function init(models, logger) {
                     description: 'Rate daily predictions accuracy',
                     args: {
                         input: {
-                            type: RateDailyPredectionAccuracyType   
+                            type: rateDailyPredectionAccuracyType   
                         }
                     },
                     resolve: function(parent, args, context) {
                         return dailyPredictionService
                             .rateDailyPrediction(context.user.id, args.input.natalDateId, args.input.date, args.input.accuracy)
+                    }
+                },
+                createNatalDate: {
+                    type: natalDateType,
+                    description: 'Create a natal date',
+                    args: {
+                        input: {
+                            type: natalDateInputType   
+                        }
+                    },
+                    resolve: function(parent, args, context) {
+                        
+                        return natalDateService.create(context.user, args.input.name, args.input.date,
+                                                    args.input.location, args.input.type,
+                                                    args.input.primary);
+                    }
+                },
+                updateNatalDate: {
+                    type: natalDateType,
+                    description: 'Update a natal date',
+                    args: {
+                        input: {
+                            type: natalDateInputType   
+                        }
+                    },
+                    resolve: function(parent, args, context) {
+                        
+                        return natalDateService.update(args.input.id, context.user.id,
+                                                            args.input.name, args.input.date,
+                                                            args.input.location, args.input.type,
+                                                            args.input.primary);
                     }
                 }
             })
