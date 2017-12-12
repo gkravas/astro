@@ -101,7 +101,9 @@ export class Chart {
         switch (type) {
             case ChartType.Combined:
                 pdata = this.calculateCombinedPlanets(cdata);
-                this._planets1 = this.getPlanets(pdata);
+                //this._planets1 = this.getPlanets(pdata);
+                this._planets1 = this.getPlanets(cdata[1]);
+                this._planets2 = this.getPlanets(cdata[0]);
                 this._ascendant = pdata.ascendant;
                 this._houses = pdata.houses;
                 break;

@@ -4,7 +4,7 @@ var fs = require('fs');
 var path = require('path');
 var parse = require('csv-parse');
 
-//models.sequelize.sync({alter: true});
+if (config.db.version == '1') {
 models.sequelize.sync({force: true})
     .then(function() {
         var parser = parse({delimiter: ','}, function(err, data){
@@ -20,7 +20,10 @@ models.sequelize.sync({force: true})
                     lemma: row[4]
                 });
             }
-          });
+        });
           
-          fs.createReadStream(path.resolve('./data/dailyPredicitonPlanets.csv')).pipe(parser);
+        fs.createReadStream(path.resolve('./data/dailyPredicitonPlanets.csv')).pipe(parser);
     });
+} else {
+    models.sequelize.sync({alter: true});
+}

@@ -4,6 +4,7 @@ const config = require('./config/index');
 
 import { logger } from './helpers/logger';
 import { Person } from './chart/js/person';
+
 Person._key = config.keys.googleAPIKEY;
 
 const morgan = require('morgan')
@@ -49,7 +50,10 @@ app.use('/api/v1/auth', authController(config, app, models, emailService, authen
 
 app.post('/graphql', authenticate, graphqlHTTP({
     schema: graphqlSchema,
-    graphiql: false
+    graphiql: false,
+    formatError(error) {
+        return error.originalError;
+    }
 }));
   
 app.get('/graphql', graphqlHTTP({

@@ -4,7 +4,8 @@
         "password": "mEsWAka3esWad5umA?A#",
         "database": "astro",
         "host": "127.0.0.1",
-        "dialect": "mysql"
+        "dialect": "mysql",
+        "version": "1"
     },
     "jwt": {
       "secret": "yaejpf7EaU7YuRXHPsi9",

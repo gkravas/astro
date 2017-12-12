@@ -46,11 +46,18 @@ module.exports = function(config) {
             type: Sequelize.STRING,
             allowNull: true,
         },
-        accountComplete: {
-            type: Sequelize.BOOLEAN,
-            allowNull: false,
-            defaultValue: false
-        }
+        location: {
+            type: Sequelize.STRING,
+            allowNull: true
+        },
+        coordinates: {
+            type: Sequelize.GEOMETRY('POINT'),
+            allowNull: true
+        },
+        timezoneMinutesDifference: {
+            type: Sequelize.INTEGER,
+            allowNull: true
+        },
     }, {
         version: true,
         paranoid: true,
@@ -217,9 +224,15 @@ module.exports = function(config) {
             primaryKey: true,
             unique: 'compositeIndex',
         },
+        location: {
+            type: Sequelize.STRING,
+            allowNull: false,
+        },
         coordinates: {
             type: Sequelize.GEOMETRY('POINT'),
-            allowNull: false
+            allowNull: false,
+            primaryKey: true,
+            unique: 'compositeIndex',
         },
         timezoneMinutesDifference: {
             type: Sequelize.INTEGER,

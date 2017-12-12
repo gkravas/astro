@@ -32,21 +32,7 @@ export class NatalDateService {
                     type: type
                 };
 
-                return that.models.NatalDate.create(model)
-                    .then((natalDate) => {
-                        if (natalDate.id == 1) {
-                            that.models.User.findOne({
-                                where: {
-                                    id: user.id
-                                }
-                            })
-                            .then((user) => {
-                                user.accountComplete = true;
-                                user.save();
-                            })
-                        }
-                        return natalDate;
-                    });
+                return that.models.NatalDate.create(model);
             });
     }
 

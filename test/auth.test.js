@@ -158,11 +158,10 @@ describe('Authorization API Integration Tests', function() {
               })
               .end(function(err, res) { 
                   expect(res.statusCode).to.equal(200); 
-                  expect(res.body.accountComplete).to.be.equal(true); 
                   expect(res.body).to.be.jsonSchema({
                     title: 'login user schema',
                     type: 'object',
-                    required: ['apps', 'user', 'accountComplete', 'token'],
+                    required: ['apps', 'user', 'token'],
                     properties: {
                         apps: {
                             type: 'object',
@@ -173,9 +172,6 @@ describe('Authorization API Integration Tests', function() {
                             iOS: {
                                 type: 'string'
                             },
-                        },
-                        accountComplete: {
-                            type: 'boolean'
                         },
                         token: {
                             type: 'string'
@@ -208,11 +204,10 @@ describe('Authorization API Integration Tests', function() {
               })
               .end(function(err, res) { 
                 expect(res.statusCode).to.equal(200); 
-                expect(res.body.accountComplete).to.be.equal(false); 
                 expect(res.body).to.be.jsonSchema({
                   title: 'login user schema',
                   type: 'object',
-                  required: ['apps', 'user', 'accountComplete', 'token'],
+                  required: ['apps', 'user', 'token'],
                   properties: {
                       apps: {
                           type: 'object',
@@ -223,9 +218,6 @@ describe('Authorization API Integration Tests', function() {
                           iOS: {
                               type: 'string'
                           },
-                      },
-                      accountComplete: {
-                          type: 'boolean'
                       },
                       token: {
                           type: 'string'

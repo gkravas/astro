@@ -44,7 +44,6 @@ module.exports = function(config, app, models, emailService, authenticate, logge
     function generateToken(req, res, next) {
         req.token = jwt.sign({
             id: req.user.id,
-            accountComplete: req.user.accountComplete,
             apps: {
                 android: config.apps.android,
                 iOS: config.apps.iOS,
@@ -58,7 +57,6 @@ module.exports = function(config, app, models, emailService, authenticate, logge
     function respond(req, res) { 
         res.status(200).json({
             user: req.user.toJSON(),
-            accountComplete: req.user.accountComplete,
             apps: {
                 android: config.apps.android,
                 iOS: config.apps.iOS,
@@ -107,9 +105,6 @@ module.exports = function(config, app, models, emailService, authenticate, logge
                 });
             })
             .then((user) => {
-                if (!user.accountComplete) {
-                    emailService.sendRegisterEmail(user.email);
-                }
                 req.user = user;
                 next();
             })
@@ -119,14 +114,9 @@ module.exports = function(config, app, models, emailService, authenticate, logge
     }
     
     router.post('/resetPassword', authenticate, function(req, res) {
-        if (!req.user.resetPassword) {
-            res.status(400).send({});
-            return;
-        }
-
         models.User.findOne({
             where: {
-                email: req.user.email
+                id: req.user.id
             }
         })
         .then((user) => {
@@ -137,7 +127,25 @@ module.exports = function(config, app, models, emailService, authenticate, logge
             res.status(200).json({});
         })
         .catch((err) => {
-            res.status(400).send({});
+            handleError(res, err);
+        });
+    });
+
+    router.post('/changeEmail', authenticate, function(req, res) {
+        models.User.findOne({
+            where: {
+                id: req.user.id
+            }
+        })
+        .then((user) => {
+            user.email = req.body.email;
+            return user.save();
+        })
+        .then((user) => {
+            res.status(200).json({});
+        })
+        .catch((err) => {
+            handleError(res, err);
         });
     });
 
@@ -173,7 +181,6 @@ module.exports = function(config, app, models, emailService, authenticate, logge
     });
 
     function handleError(res, err) {
-        console.log(err);
         if (err instanceof ServiceError) {
             res.status(400).send({ error: err });
         } else if (err instanceof Sequelize.ValidationError) {

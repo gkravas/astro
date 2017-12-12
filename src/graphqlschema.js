@@ -4,10 +4,12 @@ import {GraphQLType, GraphQLObjectType, GraphQLNonNull, GraphQLList,
     GraphQLSchema, GraphQLInt, GraphQLString, GraphQLBoolean, GraphQLInputObjectType} from 'graphql';
 import {DailyPredictionService} from './services/dailyPredictionService';
 import {NatalDateService} from './services/natalDateService';
+import {UserService} from './services/userService';
 
 function init(models, config, logger) {
     const dailyPredictionService = new DailyPredictionService(config, models, logger);
     const natalDateService = new NatalDateService(config, models, logger);
+    const userService = new UserService(config, models, logger);
 
     typeMapper.mapType((type) => {
         if (type instanceof Sequelize.GEOMETRY) {
@@ -70,9 +72,9 @@ function init(models, config, logger) {
                 type: GraphQLString,
                 description: 'The email of the user.',
             },
-            accountComplete: {
-                type: GraphQLBoolean,
-                description: 'Represents if user\'s account is complete.',
+            location: {
+                type: GraphQLString,
+                description: 'The location that user lives.',
             },
             natalDates: {
                 type: new GraphQLList(natalDateType),
@@ -147,6 +149,21 @@ function init(models, config, logger) {
         })
       });
 
+      let userInputType = new GraphQLInputObjectType({
+        name: 'UserInputType',
+        fields: () => ({
+            email: {
+                type: GraphQLString
+            },
+            password: {
+                type: GraphQLString
+            },
+            location: {
+                type: GraphQLString
+            }
+        })
+      });
+
     let schema = new GraphQLSchema({
         query: new GraphQLObjectType({
             name: 'RootQueryType',
@@ -175,8 +192,11 @@ function init(models, config, logger) {
                         }
                     },
                     resolve: (root, {natalDateId, date}, context) => {
-                        return dailyPredictionService
-                            .getDailyPrediction(context.user.id, natalDateId, date)
+                        return userService.get(context.user.id)
+                            .then(user => {
+                                return dailyPredictionService
+                                    .getDailyPrediction(user, natalDateId, date);
+                            });
                     }
                 }
             }
@@ -185,6 +205,18 @@ function init(models, config, logger) {
             name: 'AstroLucisMutations',
             description: 'Queries that can alter data',
             fields: () => ({
+                updateUser: {
+                    type: userType,
+                    description: 'Updates user\'s info',
+                    args: {
+                        input: {
+                            type: userInputType   
+                        }
+                    },
+                    resolve: function(parent, args, context) {
+                        return userService.update(context.user.id, args.input.email, args.input.location);
+                    }
+                },
                 rateDailyPredectionAccuracy: {
                     type: dailyPredictionType,
                     description: 'Rate daily predictions accuracy',

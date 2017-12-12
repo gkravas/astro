@@ -7,20 +7,21 @@ export class DailyPredictionService {
         this.chartHelper = require('../helpers/chartHelper')(config);
     }
 
-    getDailyPrediction(userId, natalDateId, date) {
+    getDailyPrediction(user, natalDateId, date) {
+        const userId = user.id;
         const that = this;
         date = moment(date, 'YYYY-MM-DD').format('YYYY-MM-DD');
         return that.findNatalDate(userId, natalDateId)
             .then(function(natalDate) {
-                return that.findDailyPrediction(userId, natalDateId, date)
+                return that.findDailyPrediction(userId, user.location, natalDateId, date)
                     .then(function(dailyPrediction) {
                         if (dailyPrediction) {
                             return Promise.resolve(dailyPrediction);
                         } else {
-                            return that.createDailyPrediction(userId, natalDate, date);
+                            return that.createDailyPrediction(user, natalDate, date);
                         }
                     })
-                    .then(function(dailyPrediction) {
+                    then(function(dailyPrediction) {
                         return that.increaseDailyPredictionViews(dailyPrediction);
                     });
             });
@@ -50,12 +51,13 @@ export class DailyPredictionService {
         return dailyPrediction.save();
     }
 
-    findDailyPrediction(userId, natalDateId, date) {
+    findDailyPrediction(userId, location, natalDateId, date) {
         return this.models.DailyPrediction.find({
             where: {
                 userId: userId,
                 natalDateId: natalDateId,
-                date: date
+                date: date,
+                location: location
             }
         });
     }
@@ -69,19 +71,19 @@ export class DailyPredictionService {
         })
     }
 
-    createDailyPrediction(userId, natalDate, date) {
+    createDailyPrediction(user, natalDate, date) {
         return this.models.DailyPrediction.create({
-            userId: userId,
+            userId: user.id,
             natalDateId: natalDate.id,
             date: date,
-            coordinates: natalDate.coordinates,
-            timezoneMinutesDifference: natalDate.timezoneMinutesDifference
+            location: user.location,
+            coordinates: user.coordinates,
+            timezoneMinutesDifference: user.timezoneMinutesDifference
         });
     }
 
     increaseDailyPredictionViews(dailyPrediction) {
-        dailyPrediction.views += 1;
-        return dailyPrediction.save();
+        return dailyPrediction.increment('views', {by: 1});
     }
 
     generateExplanation(aspects) {
