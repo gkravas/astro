@@ -227,12 +227,12 @@ module.exports = function(config) {
         location: {
             type: Sequelize.STRING,
             allowNull: false,
+            primaryKey: true,
+            unique: 'compositeIndex'
         },
         coordinates: {
             type: Sequelize.GEOMETRY('POINT'),
-            allowNull: false,
-            primaryKey: true,
-            unique: 'compositeIndex',
+            allowNull: false
         },
         timezoneMinutesDifference: {
             type: Sequelize.INTEGER,

@@ -196,6 +196,8 @@ function init(models, config, logger) {
                             .then(user => {
                                 return dailyPredictionService
                                     .getDailyPrediction(user, natalDateId, date);
+                            }).catch(e => {
+                                console.log(e);
                             });
                     }
                 }
@@ -226,8 +228,11 @@ function init(models, config, logger) {
                         }
                     },
                     resolve: function(parent, args, context) {
-                        return dailyPredictionService
-                            .rateDailyPrediction(context.user.id, args.input.natalDateId, args.input.date, args.input.accuracy)
+                        return userService.get(context.user.id)
+                            .then(user => {
+                                return dailyPredictionService
+                                    .rateDailyPrediction(user, args.input.natalDateId, args.input.date, args.input.accuracy);
+                            });
                     }
                 },
                 createNatalDate: {

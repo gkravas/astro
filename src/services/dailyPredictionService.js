@@ -21,7 +21,8 @@ export class DailyPredictionService {
                             return that.createDailyPrediction(user, natalDate, date);
                         }
                     })
-                    then(function(dailyPrediction) {
+                    .then(function(dailyPrediction) {
+                        console.log(dailyPrediction);
                         return that.increaseDailyPredictionViews(dailyPrediction);
                     });
             });
@@ -38,21 +39,22 @@ export class DailyPredictionService {
             });
     }
 
-    rateDailyPrediction(userId, natalDateId, date, accuracy) {
+    rateDailyPrediction(user, natalDateId, date, accuracy) {
         const that = this;
-        return that.findDailyPrediction(userId, natalDateId, date)
+        return that.findDailyPrediction(user.id, user.location, natalDateId, date)
             .then(function(dailyPrediction) {
                 return that.setDailyPredictionAccuracy(dailyPrediction, accuracy);
             });
     }
 
     setDailyPredictionAccuracy(dailyPrediction, accuracy) {
-        dailyPrediction.accuracy = accuracy;
-        return dailyPrediction.save();
+        return dailyPrediction.update({
+            accuracy: accuracy
+        });
     }
 
     findDailyPrediction(userId, location, natalDateId, date) {
-        return this.models.DailyPrediction.find({
+        return this.models.DailyPrediction.findOne({
             where: {
                 userId: userId,
                 natalDateId: natalDateId,
@@ -83,7 +85,7 @@ export class DailyPredictionService {
     }
 
     increaseDailyPredictionViews(dailyPrediction) {
-        return dailyPrediction.increment('views', {by: 1});
+        return dailyPrediction.increment('views'); 
     }
 
     generateExplanation(aspects) {
