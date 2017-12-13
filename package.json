@@ -10,7 +10,8 @@
     "debug": "node --debug ./dist/app.js",
     "clean": "rm -rf dist && mkdir dist",
     "build": "npm run clean && npm run build-server",
-    "build-server": "babel -d ./dist ./src -s"
+    "build-server": "babel -d ./dist ./src -s",
+    "startProd": "pm2 start process.yml"
   },
   "author": "George Kravas",
   "license": "ISC",

@@ -1,4 +1,7 @@
 {
+    "server": {
+      "port": "20501"
+    },
     "db": {
         "username": "astro",
         "password": "mEsWAka3esWad5umA?A#",

@@ -61,7 +61,7 @@ app.get('/graphql', graphqlHTTP({
     graphiql: true
 }));
 
-app.listen(3579, function () {
+app.listen(config.server.port, function () {
     logger.log({
         level: 'info',
         message: 'AstroQL listening on port 3579!'
