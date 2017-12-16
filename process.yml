@@ -1,5 +1,6 @@
 apps:
   - script   : ./dist/app.js
+    name: astroAPIServer
     instances: 2
     exec_mode: cluster
     watch  : true
