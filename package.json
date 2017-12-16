@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "astro-express",
   "scripts": {
-    "postinstall": "babel-node init.js --compilers js:babel-core/register",
     "test": "NODE_ENV=test ./node_modules/mocha/bin/mocha",
     "setupDB": "node ./dist/init.js",
     "start": "node ./dist/app.js",
