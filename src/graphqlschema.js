@@ -171,13 +171,9 @@ function init(models, config, logger) {
 
                 me: {
                     type: userType,
-                    resolve: resolver(models.User, {
-                        before: (findOptions, args, context) => {
-                            findOptions.where = {
-                              id: context.user.id
-                            };
-                          }
-                    })
+                    resolve: (root, args, context) => {
+                        return userService.get(context.user.id);
+                    }
                 },
 
                 dailyPrediction: {
@@ -196,8 +192,6 @@ function init(models, config, logger) {
                             .then(user => {
                                 return dailyPredictionService
                                     .getDailyPrediction(user, natalDateId, date);
-                            }).catch(e => {
-                                console.log(e);
                             });
                     }
                 }
