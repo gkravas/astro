@@ -20,7 +20,7 @@
       "password": "9m7Wu_N-Q9@naB7s"
     },
     "website": {
-      "baseURL": "http://localhost:4200"
+      "baseURL": "https://astrolucis.gr"
     },
     "apps": {
       "android": "1.0.0",
