@@ -17,6 +17,9 @@ export class NatalDateService {
                 if (date !== validatedDate) {
                     throw new ServiceError('format violation', "Wrong date format should be 'YYYY-MM-DD HH:mm:ss'", 'birthDate');
                 }
+                validatedDate = moment(date, 'YYYY-MM-DD HH:mm:ss')
+                    .utcOffset(args.timezoneMinutesDifference / 60)
+                    .toISOString();
                 
                 var model = {
                     userId: user.id,
@@ -41,6 +44,9 @@ export class NatalDateService {
                 if (date !== validatedDate) {
                     throw new ServiceError('format violation', "Wrong date format should be 'YYYY-MM-DD HH:mm:ss'", 'birthDate');
                 }
+                validatedDate = moment(date, 'YYYY-MM-DD HH:mm:ss')
+                    .utcOffset(args.timezoneMinutesDifference / 60)
+                    .toISOString();
 
                 var model = {
                     id: id,
