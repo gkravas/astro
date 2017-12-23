@@ -13,17 +13,7 @@ module.exports = function(config) {
             max: 5,
             min: 0,
             idle: 10000
-        },
-        dialectOptions: {
-            timezone: '+00:00'
-        },
-        typeCast: function (field, next) { // for reading from database
-            if (field.type === 'DATETIME') {
-              return field.string();
-            }
-            return next();
-          },
-        timezone: '+00:00'
+        }
     });
 
     const User = sql.define('user', {
