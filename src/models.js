@@ -13,7 +13,11 @@ module.exports = function(config) {
             max: 5,
             min: 0,
             idle: 10000
-        }
+        },
+        dialectOptions: {
+            timezone: '+00:00'
+        },
+        timezone: '+00:00'
     });
 
     const User = sql.define('user', {
