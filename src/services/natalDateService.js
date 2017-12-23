@@ -1,5 +1,7 @@
 import moment from 'moment';
 import ServiceError from '../errors/serviceError'
+//import { Utils } from '../utils';
+
 export class NatalDateService {
 
     constructor(config, models, logger) {
@@ -11,12 +13,9 @@ export class NatalDateService {
         const that = this;
         return that.timezoneHelper.getTimezone(location)
             .then(function(args) {
-
-                const validatedDate = moment(date, 'YYYY-MM-DD HH:mm:ss')
-                    .utcOffset(args.timezoneMinutesDifference)
-                    .format('YYYY-MM-DD HH:mm:ss');
-                console.log('date: ' + date);
-                console.log('validatedDate: ' + validatedDate);
+                date = date + ' ' + Utils.formatTimeZoneOffset(args.timezoneMinutesDifference);
+                var validatedDate = moment(date, 'YYYY-MM-DD HH:mm:ss ZZ')
+                    .format('YYYY-MM-DD HH:mm:ss ZZ');
                 if (date !== validatedDate) {
                     throw new ServiceError('format violation', "Wrong date format should be 'YYYY-MM-DD HH:mm:ss'", 'birthDate');
                 }
@@ -39,25 +38,22 @@ export class NatalDateService {
     update(id, userId, name, date, location, type, primary) {
         const that = this;
         return that.timezoneHelper.getTimezone(location)
-            .then(function(location) {
-                return {
-                    location: location
-                }
-            })
             .then(function(args) {
-                const validatedDate = moment(date, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD HH:mm:ss');
+                var validatedDate = moment(date, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD HH:mm:ss');
                 if (date !== validatedDate) {
                     throw new ServiceError('format violation', "Wrong date format should be 'YYYY-MM-DD HH:mm:ss'", 'birthDate');
                 }
-                
+                validatedDate = moment(date, 'YYYY-MM-DD HH:mm:ss')
+                    .utcOffset(args.timezoneMinutesDifference / 60)
+                    .format('YYYY-MM-DD HH:mm:ss ZZ');
                 var model = {
                     id: id,
                     userId: userId,
                     name: name,
                     date: validatedDate,
                     location: location,
-                    coordinates: { type: 'Point', coordinates: args.location.coordinates},
-                    timezoneMinutesDifference: args.location.timezoneMinutesDifference,
+                    coordinates: { type: 'Point', coordinates: args.coordinates},
+                    timezoneMinutesDifference: args.timezoneMinutesDifference,
                     primary: primary,
                     type: type
                 };
