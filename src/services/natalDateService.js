@@ -47,7 +47,7 @@ export class NatalDateService {
                 validatedDate = moment(date, 'YYYY-MM-DD HH:mm:ss')
                     .utcOffset(args.timezoneMinutesDifference / 60)
                     .toISOString();
-                    console.log('validatedDate: ' + validatedDate);
+
                 var model = {
                     id: id,
                     userId: userId,

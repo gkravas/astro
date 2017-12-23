@@ -15,7 +15,7 @@ module.exports = function(config) {
             idle: 10000
         },
         dialectOptions: {
-            useUTC: true
+            timezone: '+00:00'
         },
         timezone: '+00:00'
     });
