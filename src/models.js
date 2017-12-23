@@ -17,6 +17,12 @@ module.exports = function(config) {
         dialectOptions: {
             timezone: '+00:00'
         },
+        typeCast: function (field, next) { // for reading from database
+            if (field.type === 'DATETIME') {
+              return field.string();
+            }
+            return next();
+          },
         timezone: '+00:00'
     });
 
