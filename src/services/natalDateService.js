@@ -13,12 +13,13 @@ export class NatalDateService {
         const that = this;
         return that.timezoneHelper.getTimezone(location)
             .then(function(args) {
-                date = date + ' ' + Utils.formatTimeZoneOffset(args.timezoneMinutesDifference);
-                var validatedDate = moment(date, 'YYYY-MM-DD HH:mm:ss ZZ')
-                    .format('YYYY-MM-DD HH:mm:ss ZZ');
+                var validatedDate = moment(date, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD HH:mm:ss');
                 if (date !== validatedDate) {
                     throw new ServiceError('format violation', "Wrong date format should be 'YYYY-MM-DD HH:mm:ss'", 'birthDate');
                 }
+                validatedDate = moment(date, 'YYYY-MM-DD HH:mm:ss')
+                    .utcOffset(args.timezoneMinutesDifference / 60)
+                    .toISOString();
                 
                 var model = {
                     userId: user.id,
@@ -45,7 +46,8 @@ export class NatalDateService {
                 }
                 validatedDate = moment(date, 'YYYY-MM-DD HH:mm:ss')
                     .utcOffset(args.timezoneMinutesDifference / 60)
-                    .format('YYYY-MM-DD HH:mm:ss ZZ');
+                    .toISOString();
+                    
                 var model = {
                     id: id,
                     userId: userId,
