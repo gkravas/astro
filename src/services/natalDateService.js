@@ -1,6 +1,6 @@
 import moment from 'moment';
 import ServiceError from '../errors/serviceError'
-//import { Utils } from '../utils';
+import { Utils } from '../utils';
 
 export class NatalDateService {
 
@@ -40,13 +40,13 @@ export class NatalDateService {
         const that = this;
         return that.timezoneHelper.getTimezone(location)
             .then(function(args) {
-                var validatedDate = moment(date, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD HH:mm:ss');
+                var validatedDate = moment(date, 'YYYY-MM-DDTHH:mm:ss').format('YYYY-MM-DDTHH:mm:ss');
                 if (date !== validatedDate) {
                     throw new ServiceError('format violation', "Wrong date format should be 'YYYY-MM-DD HH:mm:ss'", 'birthDate');
                 }
-                validatedDate = moment(date, 'YYYY-MM-DD HH:mm:ss')
-                    .utcOffset(args.timezoneMinutesDifference / 60)
-                    .format('YYYY-MM-DD HH:mm:ss');
+                const timezoneOffset = Utils.formatTimeZoneOffset(args.timezoneMinutesDifference);
+                validatedDate = moment.parseZone(date + timezoneOffset);
+                console.log(validatedDate);
 
                 var model = {
                     id: id,

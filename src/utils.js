@@ -10,7 +10,7 @@ export class Utils {
         for (var i = length; i > 0; --i) result += mask[Math.floor(Math.random() * mask.length)];
         return result;
     }
-    /*
+    
     static formatTimeZoneOffset(offset) {
         const isPositive = offset > 0;
         offset = Math.abs(offset);
@@ -19,5 +19,5 @@ export class Utils {
 
     static pad2(number) {
         return (number < 10 ? '0' : '') + number
-    }*/
+    }
 }
