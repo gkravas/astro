@@ -11,6 +11,8 @@ export class DailyPredictionService {
         const userId = user.id;
         const that = this;
         date = moment(date, 'YYYY-MM-DD').format('YYYY-MM-DD');
+        console.log('userId: ' + userId);
+        console.log('natalDateId: ' + natalDateId);
         return that.findNatalDate(userId, natalDateId)
             .then(function(natalDate) {
                 return that.findDailyPrediction(userId, user.location, natalDateId, date)
@@ -22,7 +24,6 @@ export class DailyPredictionService {
                         }
                     })
                     .then(function(dailyPrediction) {
-                        console.log(dailyPrediction);
                         return that.increaseDailyPredictionViews(dailyPrediction);
                     });
             });
@@ -30,13 +31,20 @@ export class DailyPredictionService {
 
     getDailyPredictionExplanations(dailyPrediction) {
         const that = this;
-        return dailyPrediction.getNatalDate()
-            .then(function(natalDate) {
-                return that.chartHelper.getDailyPrediction(natalDate, dailyPrediction)
-            })
-            .then(function(chartData) {
-                return that.generateExplanation(chartData.aspects);
-            });
+        return this.models.NatalDate.findOne({
+            where: {
+                id: dailyPrediction.natalDateId,
+                userId: dailyPrediction.userId
+            }
+        })
+        .then(function(natalDate) {
+            console.log('natalDate: ' + JSON.stringify(natalDate, null, 4));
+            console.log('dailyPrediction: ' + JSON.stringify(dailyPrediction, null, 4));
+            return that.chartHelper.getDailyPrediction(natalDate, dailyPrediction)
+        })
+        .then(function(chartData) {
+            return that.generateExplanation(chartData.aspects);
+        });
     }
 
     rateDailyPrediction(user, natalDateId, date, accuracy) {

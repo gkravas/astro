@@ -188,6 +188,7 @@ function init(models, config, logger) {
                         }
                     },
                     resolve: (root, {natalDateId, date}, context) => {
+                        console.log('context.user.id: ' + context.user.id);
                         return userService.get(context.user.id)
                             .then(user => {
                                 return dailyPredictionService
