@@ -8,10 +8,6 @@ module.exports = function(config, logger){
             .then(function(coordinates) {
                 return Person.getTimezone(coordinates)
                     .then(function(timezone) {
-                        if (!timezone) {
-                            throw new ExternalServiceError("timezone error", "timezone not found");
-                        }
-
                         return Promise.resolve({
                             timezoneMinutesDifference: timezone,
                             coordinates: [coordinates.lat, coordinates.lng]
