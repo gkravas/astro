@@ -23,7 +23,7 @@ function init(models, config, logger) {
         name: 'NatalDate',
         description: 'A natal date',
         fields: attributeFields(models.NatalDate, {
-            only: ['id', 'name', 'date', 'location', 'primary', 'type']
+            only: ['id', 'name', 'date', 'location', 'primary', 'type', 'timezoneMinutesDifference']
         })
     });
 
