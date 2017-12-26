@@ -4,10 +4,8 @@ const Sequelize = require('sequelize');
 import {ExternalServiceError} from '../errors/externalServiceError';
 module.exports = function(config, logger){
     function getTimezone(city) {
-        console.error('city: ' + city);
         return Person.getLatLon(city)
             .then(function(coordinates) {
-                console.error('coordinates: ' + JSON.stringify(coordinates));
                 return Person.getTimezone(coordinates)
                     .then(function(timezone) {
                         return Promise.resolve({
@@ -17,7 +15,6 @@ module.exports = function(config, logger){
                     });
             })
             .catch(function(error) {
-                console.error(error);
                 logger.log({
                     level: 'error',
                     message: error

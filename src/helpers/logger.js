@@ -1,7 +1,7 @@
 import { createLogger, format, transports } from 'winston';
 
-const isProduction = process.env.ENV === 'production'
-
+const isProduction = process.env.NODE_ENV === 'production'
+console.log('isProduction: ' + isProduction);
 export const logger = createLogger({
     level: isProduction ? 'info' : 'debug',
     exitOnError: false
@@ -12,11 +12,8 @@ if (!isProduction) {
         format: format.simple()
     }));
 } else {
-    logger.add(new transports.File({
+    logger.add(new transports.Console({
         handleExceptions: true,
-        maxsize: 5242880, //5MB
-        maxFiles: 5,
-        filename: './logs/log.log',
         format: format.combine(format.timestamp(), format.json()),
     }));
 }
