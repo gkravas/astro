@@ -92,6 +92,7 @@ class Person {
                     address: address
                 }
             }).then((latlng) => {
+                console.error('getLatLon: ' + JSON.stringify(latlng, null, 4));
                 if (latlng.status === 'OK') {
                     return latlng.results[0].geometry.location;
                 }
