@@ -85,6 +85,7 @@ class Person {
      */
     static getLatLon(address) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.error('this.apiKey: ' + this.apiKey);
             return yield rp_1.default({
                 uri: "https://maps.googleapis.com/maps/api/geocode/json",
                 qs: {
