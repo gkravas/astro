@@ -1,7 +1,7 @@
 import { createLogger, format, transports } from 'winston';
 
 const isProduction = process.env.NODE_ENV === 'production'
-console.log('isProduction: ' + isProduction);
+console.log(process.env);
 export const logger = createLogger({
     level: isProduction ? 'info' : 'debug',
     exitOnError: false
