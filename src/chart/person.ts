@@ -120,7 +120,7 @@ export class Person {
         return await rp({
             uri: "https://maps.googleapis.com/maps/api/timezone/json",
             qs: {
-                key: this.apiKey,
+                key: Person.apiKey,
                 location: `${p.lat},${p.lng}`,
                 timestamp: Math.floor(Date.now() / 1000)
             }
@@ -138,7 +138,7 @@ export class Person {
         return await rp({
             uri: "https://maps.googleapis.com/maps/api/geocode/json",
             qs: {
-                key: this.apiKey,
+                key: Person.apiKey,
                 address: address
             }
         }).then(

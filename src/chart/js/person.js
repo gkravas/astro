@@ -72,7 +72,7 @@ class Person {
             return yield rp_1.default({
                 uri: "https://maps.googleapis.com/maps/api/timezone/json",
                 qs: {
-                    key: this.apiKey,
+                    key: Person.apiKey,
                     location: `${p.lat},${p.lng}`,
                     timestamp: Math.floor(Date.now() / 1000)
                 }
@@ -85,15 +85,14 @@ class Person {
      */
     static getLatLon(address) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.error('this.apiKey: ' + this.apiKey);
+            console.error(Person.apiKey);
             return yield rp_1.default({
                 uri: "https://maps.googleapis.com/maps/api/geocode/json",
                 qs: {
-                    key: this.apiKey,
+                    key: Person.apiKey,
                     address: address
                 }
             }).then((latlng) => {
-                console.error('getLatLon: ' + JSON.stringify(latlng, null, 4));
                 if (latlng.status === 'OK') {
                     return latlng.results[0].geometry.location;
                 }
