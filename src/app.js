@@ -5,7 +5,7 @@ const config = require('./config/index');
 import { logger } from './helpers/logger';
 import { Person } from './chart/js/person';
 
-Person._key = config.keys.googleAPIKEY;
+Person.apiKey = config.keys.googleAPIKEY;
 
 const morgan = require('morgan')
 
