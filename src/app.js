@@ -7,6 +7,7 @@ import { Person } from './chart/js/person';
 
 Person.apiKey = config.keys.googleAPIKEY;
 
+const Raven = require('raven');
 const morgan = require('morgan')
 
 const compression = require('compression')
@@ -32,6 +33,15 @@ morgan.token('reqBody', function (req, res) {
 morgan.token('resBody', function (req, res) { 
     return JSON.stringify(res.logBody);
 });
+
+
+// Must configure Raven before doing anything else with it
+Raven.config('https://0d7eb42a4ec5445b949ee2b82faa95e1@sentry.io/264413').install();
+
+// The request handler must be the first middleware on the app
+app.use(Raven.requestHandler());
+app.use(Raven.errorHandler());
+
 app.use(compression())
 app.use(mung.json(
     function transform(body, req, res) {

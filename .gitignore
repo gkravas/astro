@@ -131,3 +131,5 @@ nbproject
 dump.rdb
 jplfiles
 dist
+
+package-lock\.json
