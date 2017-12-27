@@ -181,6 +181,7 @@ module.exports = function(config, app, models, emailService, authenticate, logge
     });
 
     function handleError(res, err) {
+        logger.error(err);
         if (err instanceof ServiceError) {
             res.status(400).send({ error: err });
         } else if (err instanceof Sequelize.ValidationError) {
@@ -189,7 +190,6 @@ module.exports = function(config, app, models, emailService, authenticate, logge
         } else if (err instanceof ExternalServiceError) {
             res.status(400).send({ error: err });
         } else {
-            logger.error(err);
             res.status(400).send({ error: new ServiceError('UnknownError') });
         }
     }
