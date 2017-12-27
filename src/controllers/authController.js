@@ -90,7 +90,7 @@ module.exports = function(config, app, models, emailService, authenticate, logge
                 })
                 .then((user) => {
                     if (user) {
-                        if (!user.email) {
+                        if (!user.email && !fbRes.email) {
                             user.email = fbRes.email;    
                         }
                         user.fbId = fbRes.id;
@@ -98,7 +98,7 @@ module.exports = function(config, app, models, emailService, authenticate, logge
                         return user.save();
                     }
                     return models.User.create({
-                        email: fbRes.email,
+                        email: fbRes.email ? fbRes.email : fbRes.id + '@facebook.com',
                         fbId: fbRes.id,
                         fbToken: req.body.fbToken,
                     });
