@@ -74,6 +74,7 @@ module.exports = function(config) {
             },
             beforeCreate: function(user, options) {
                 user.password = user.generateHash(user.password);
+                user.email = user.email.toLowerCase()
                 return User.max('id')
                     .then(max => {
                         user.id = (Number.isNaN(max) ? 1 : max + 1);
@@ -82,6 +83,9 @@ module.exports = function(config) {
             beforeUpdate: function(user, options) {
                 if (user.changed('password')) {
                     user.password = user.generateHash(user.password);
+                }
+                if (user.changed('email')) {
+                    user.email = user.email.toLowerCase()
                 }
             },
         }

@@ -94,7 +94,7 @@ describe('Authorization API Integration Tests', function() {
             .post('/api/v1/auth/register')
             .send({
                 email: 'gkravas@dispostable.com',
-                password: '123456',
+                password: "1s='w9<)S\\",
                 birthDate: '1984-08-16 21:30:00',
                 birthLocation: 'thessaloniki',
                 type: 'male'

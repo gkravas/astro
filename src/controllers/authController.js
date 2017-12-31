@@ -13,7 +13,7 @@ module.exports = function(config, app, models, emailService, authenticate, logge
     const ServiceError = require('../errors/serviceError.js').ServiceError;
     const Sequelize = require('sequelize');
     const FB = new Facebook(config.fb);
-
+    const jsesc = require('jsesc');
     const router = express.Router();
 
     app.use(passport.initialize());
@@ -26,11 +26,11 @@ module.exports = function(config, app, models, emailService, authenticate, logge
     function(username, password, done) {
         models.User.findOne({
             where: {
-                email: username
+                email: username.toLocaleLowerCase()
             }
         })
         .then(function(user) {
-            if(!user || !user.validPassword(password)) {
+            if(!user || !user.validPassword(jsesc(password, { 'escapeEverything': true }))) {
                 done(null, false, {message: 'Invalid username or password'});
             } else {
                 done(null, user);
@@ -120,7 +120,7 @@ module.exports = function(config, app, models, emailService, authenticate, logge
             }
         })
         .then((user) => {
-            user.password = req.body.password;
+            user.password = jsesc(req.body.password, { 'escapeEverything': true });
             return user.save();
         })
         .then((user) => {
@@ -150,12 +150,12 @@ module.exports = function(config, app, models, emailService, authenticate, logge
     });
 
     router.post('/sendResetEmail', function(req, res) {
-        Promise.resolve(emailService.sendResetEmail(req.body.email))
+        Promise.resolve(emailService.sendResetEmail(req.body.email.toLowerCase()))
             .then((user) => {
                 res.status(200).json({});
             })
             .catch((err) => {
-                res.status(400).send({});
+                handleError(res, err);
             });
     });
 
@@ -167,12 +167,14 @@ module.exports = function(config, app, models, emailService, authenticate, logge
     router.post('/fbLogin', fbLogin, generateToken, respond);
     
     router.post('/register', function(req, res) {
+        const password = req.body.password.length < 6 ?
+            req.body.password : jsesc(req.body.password, { 'escapeEverything': true });
         return models.User.create({
             email: req.body.email,
-            password: req.body.password
+            password: password
         })
-        .then(function(natalDate) {
-            emailService.sendRegisterEmail(req.body.email);
+        .then(function(user) {
+            emailService.sendRegisterEmail(user.email);
             res.status(201).json({});
         })
         .catch(function(err) {
@@ -181,7 +183,7 @@ module.exports = function(config, app, models, emailService, authenticate, logge
     });
 
     function handleError(res, err) {
-        logger.error(err);
+        logger.error(JSON.stringify(err, null, 4));
         if (err instanceof ServiceError) {
             res.status(400).send({ error: err });
         } else if (err instanceof Sequelize.ValidationError) {

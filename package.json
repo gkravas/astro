@@ -1,6 +1,6 @@
 {
   "name": "astro-express",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "astro-express",
   "scripts": {
     "test": "NODE_ENV=test ./node_modules/mocha/bin/mocha",
@@ -34,6 +34,7 @@
     "graphql": "^0.11.7",
     "graphql-relay": "^0.5.4",
     "graphql-sequelize": "^5.6.0",
+    "jsesc": "^2.5.1",
     "jsonwebtoken": "^8.1.0",
     "lodash": "^4.17.4",
     "moment": "^2.19.4",
