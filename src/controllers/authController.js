@@ -183,7 +183,7 @@ module.exports = function(config, app, models, emailService, authenticate, logge
     });
 
     function handleError(res, err) {
-        logger.error(JSON.stringify(err, null, 4));
+        logger.error(JSON.stringify(err));
         if (err instanceof ServiceError) {
             res.status(400).send({ error: err });
         } else if (err instanceof Sequelize.ValidationError) {
