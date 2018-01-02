@@ -60,7 +60,8 @@ module.exports = function(config, models, logger) {
             }, config.jwt.secret, {
                 expiresIn: config.jwt.resetPasswordTokenExpiration
             }));
-        }).then((token) => {
+        })
+        .then((token) => {
             const subject = 'Αλλαγή κωδικού ασφαλείας';
             const text = 'Μάλλον ξέχασες τον κωδικό σου.\n\n' + 
                 'Κανένα πρόβλημα! Ακολούθησε τον παρακάτω σύνδεσμο για να τον αλλάξεις!\n\n' +
@@ -84,6 +85,10 @@ module.exports = function(config, models, logger) {
     
             sendMail(mailOptions);
         })
+        .catch((error) => {
+            logger.log({ level: 'error', message: error });
+            return Promise.resolve({});
+        });
     }
 
     return nodemailer;
