@@ -69,7 +69,7 @@ module.exports = function(config) {
         hooks: {
             beforeValidate: function(user, options) {
                 if (!user.password && user.fbId && user.fbToken) {
-                    user.password = Utils.randomString(10, 'aA#!');
+                    user.password = Utils.randomString(20, 'aA#');
                 }
             },
             beforeCreate: function(user, options) {
