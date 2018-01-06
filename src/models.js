@@ -32,15 +32,13 @@ module.exports = function(config) {
             validate: {
                 isEmail: true
             },
-            allowNull:false,
+            allowNull: false,
             unique: true
         },
         password: {
             type: Sequelize.STRING,
-            validate: {
-                min: 6
-            },
-            allowNull:false
+            allowNull: false,
+            notEmpty: true
         },
         fbId: { 
             type: Sequelize.BIGINT,
