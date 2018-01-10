@@ -14,7 +14,7 @@ export class Utils {
     static formatTimeZoneOffset(offset) {
         const isPositive = offset > 0;
         offset = Math.abs(offset);
-        return (isPositive ? '+' : '-') + Utils.pad2(parseInt(offset / 3600, 10)) + '' + Utils.pad2(offset % 3600);
+        return (isPositive ? '+' : '-') + Utils.pad2(parseInt(offset / 3600, 10)) + ':' + Utils.pad2(offset % 3600);
     }
 
     static pad2(number) {

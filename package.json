@@ -1,6 +1,6 @@
 {
   "name": "astro-express",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "astro-express",
   "scripts": {
     "test": "NODE_ENV=test ./node_modules/mocha/bin/mocha",

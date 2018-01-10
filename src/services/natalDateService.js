@@ -18,7 +18,7 @@ export class NatalDateService {
                     throw new ServiceError('format violation', "Wrong date format should be 'YYYY-MM-DD HH:mm:ss'", 'birthDate');
                 }
                 const timezoneOffset = Utils.formatTimeZoneOffset(args.timezoneMinutesDifference);
-                validatedDate = moment.parseZone(date + timezoneOffset);
+                validatedDate = moment.parseZone(date + timezoneOffset, "YYYY-MM-DDTHH:mm:ssZ", true).format();
                 
                 var model = {
                     userId: user.id,
