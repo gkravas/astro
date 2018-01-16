@@ -1,6 +1,6 @@
 {
   "name": "astro-express",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "astro-express",
   "scripts": {
     "test": "NODE_ENV=test ./node_modules/mocha/bin/mocha",
@@ -39,6 +39,7 @@
     "lodash": "^4.17.4",
     "moment": "^2.19.4",
     "morgan": "^1.9.0",
+    "morgan-json": "^1.1.0",
     "mysql2": "^1.5.1",
     "nodemailer": "^4.4.1",
     "passport": "^0.4.0",

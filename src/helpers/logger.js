@@ -17,9 +17,3 @@ if (!isProduction) {
         format: format.combine(format.timestamp(), format.json()),
     }));
 }
-
-logger.stream = {
-    write: function(message, encoding){
-        logger.info(message);
-    }
-};

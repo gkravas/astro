@@ -22,10 +22,12 @@ const authController = require('./controllers/authController');
 const emailService = require('./services/emailService')(config, models, logger);
 const cors = require('cors');
 const mung = require('express-mung');
+const json = require('morgan-json');
 
 const app = express().use('*', cors());;
 
-const format = ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" req.body :reqBody res.body :resBody';
+const format = json(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" :reqBody :resBody :jwt :userId');
+
 
 morgan.token('reqBody', function (req, res) { 
     return JSON.stringify(req.body);
@@ -33,7 +35,12 @@ morgan.token('reqBody', function (req, res) {
 morgan.token('resBody', function (req, res) { 
     return JSON.stringify(res.logBody);
 });
-
+morgan.token('jwt', function (req, res) { 
+    return JSON.stringify(req.user);
+});
+morgan.token('userId', function (req, res) { 
+    return req.user ? req.user.id : "0";
+});
 
 // Must configure Raven before doing anything else with it
 Raven.config('https://0d7eb42a4ec5445b949ee2b82faa95e1@sentry.io/264413').install();
@@ -51,7 +58,29 @@ app.use(mung.json(
 ));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(morgan(morgan.compile(format), { stream: logger.stream }));
+app.use(morgan(format, { 
+    stream: {
+        write: function(message, encoding){
+            const json = JSON.parse(message);
+            
+            models.Audit.create({
+                referrer: json.referrer,
+                userAgent: json['user-agent'],
+                method: json.method,
+                status: json.status,
+                request: json.reqBody,
+                response: json.resBody,
+                jwt: json.jwt,
+                userId: json.userId,
+                createdAt: new Date()
+            });
+            models.UserMisc.upsert({
+                userId: json.userId,
+                lastSeen: new Date()
+            });
+        }
+    }
+}));
 //app.use(require('serve-static')(__dirname + '/../../public'));
 //app.use(require('cookie-parser')());
 //app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));

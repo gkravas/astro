@@ -8,7 +8,7 @@
         "database": "astro",
         "host": "127.0.0.1",
         "dialect": "mysql",
-        "version": "2"
+        "version": "3"
     },
     "jwt": {
       "secret": "yaejpf7EaU7YuRXHPsi9",

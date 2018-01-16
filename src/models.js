@@ -263,11 +263,72 @@ module.exports = function(config) {
     NatalDate.hasMany(DailyPrediction, {foreignKey: 'natalDateId', sourceKey: 'id'});
     DailyPrediction.NatalDate = DailyPrediction.belongsTo(NatalDate, {foreignKey: 'natalDateId', targetKey: 'id'});
 
+    const Audit = sql.define('audit', {
+        id: { 
+            type: Sequelize.BIGINT,
+            autoIncrement: true,
+            primaryKey: true
+        },
+        userId: {
+            type: Sequelize.BIGINT,
+            allowNull: false,
+        },
+        createdAt: {
+            type: Sequelize.DATE,
+            allowNull: false,
+        },
+        userAgent: {
+            type: Sequelize.TEXT,
+            allowNull: false,
+        },
+        method: {
+            type: Sequelize.STRING,
+            allowNull: false,
+        },
+        status: {
+            type: Sequelize.INTEGER,
+            allowNull: false,
+        },
+        request: {
+            type: Sequelize.TEXT,
+            allowNull: false,
+        },
+        response: {
+            type: Sequelize.TEXT,
+            allowNull: false,
+        },
+        jwt: {
+            type: Sequelize.TEXT,
+            allowNull: false,
+        }
+    }, {
+        version: false,
+        paranoid: false,
+        timestamps: false
+    });
+
+    const UserMisc = sql.define('userMisc', {
+        userId: {
+            type: Sequelize.BIGINT,
+            allowNull: false,
+            primaryKey: true
+        },
+        lastSeen: {
+            type: Sequelize.DATE,
+            allowNull: false,
+        }
+    }, {
+        version: true,
+        paranoid: true,
+        timestamps: true
+    });
     return {
         sequelize: sql,
         User: User,
         NatalDate: NatalDate,
         DailyPlanetAspectExplanation: DailyPlanetAspectExplanation,
         DailyPrediction: DailyPrediction,
+        Audit: Audit,
+        UserMisc: UserMisc
     }
 }
