@@ -66,6 +66,7 @@ app.use(morgan(format, {
             models.Audit.create({
                 referrer: json.referrer,
                 userAgent: json['user-agent'],
+                url: json.url + json['http-version'],
                 method: json.method,
                 status: json.status,
                 request: json.reqBody,

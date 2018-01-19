@@ -281,6 +281,10 @@ module.exports = function(config) {
             type: Sequelize.TEXT,
             allowNull: false,
         },
+        url: {
+            type: Sequelize.TEXT,
+            allowNull: false,
+        },
         method: {
             type: Sequelize.STRING,
             allowNull: false,
