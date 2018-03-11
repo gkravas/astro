@@ -1,6 +1,6 @@
 import { createLogger, format, transports } from 'winston';
 
-const isProduction = process.env.ENV === 'production'
+const isProduction = process.env.NODE_ENV === 'production'
 console.log('isProduction: ' + isProduction);
 export const logger = createLogger({
     level: isProduction ? 'info' : 'debug',

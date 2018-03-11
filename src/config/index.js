@@ -1,4 +1,4 @@
-const environment = process.env.ENV || 'development'
+const environment = process.env.NODE_ENV || 'development'
 
 var fs = require('fs');
 var path = require('path');
