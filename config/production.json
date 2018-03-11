@@ -1,6 +1,6 @@
 {
     "server": {
-      "port": "20501"
+      "port": "3597"
     },
     "db": {
         "username": "astro",
