@@ -10,7 +10,7 @@
     "clean": "rm -rf dist && mkdir dist",
     "build": "npm run clean && npm run build-server",
     "build-server": "babel -d ./dist ./src -s",
-    "startProd": "pm2 start process.yml"
+    "startProd": "pm2 start process.yml --env production"
   },
   "author": "George Kravas",
   "license": "ISC",
