@@ -8,11 +8,11 @@
         "database": "astro",
         "host": "127.0.0.1",
         "dialect": "mysql",
-        "version": "4"
+        "version": "5"
     },
     "jwt": {
       "secret": "yaejpf7EaU7YuRXHPsi9",
-      "tokenExpiration": "7d",
+      "tokenExpiration": "365d",
       "resetPasswordTokenExpiration": "30m"
     },
     "email": {
