@@ -23,7 +23,7 @@
       "baseURL": "http://localhost:4200"
     },
     "apps": {
-      "android": "1.0.0",
+      "android": "1.0.2",
       "iOS": "1.0.0"
     },
     "keys": {

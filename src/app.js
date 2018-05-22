@@ -53,6 +53,9 @@ app.use(compression())
 app.use(mung.json(
     function transform(body, req, res) {
         res.logBody = body
+        if (res.logBody.password) {
+            res.logBody.password = "******"
+        }
         return body;
     }
 ));

@@ -7,6 +7,41 @@ export class NatalDateService {
     constructor(config, models, logger) {
         this.models = models;
         this.timezoneHelper = require('../helpers/timezoneHelper')(config, logger);
+        this.chartHelper = require('../helpers/chartHelper')(config);
+    }
+
+    getChart(natalDate) {
+        return this.chartHelper.getNatalDateChart(natalDate.date, natalDate.coordinates);
+    }
+
+    get(user, id) {
+        const that = this;
+        if (id) {
+            return that.models.NatalDate.findOne({
+                where: {
+                    id: id,
+                    userId: user.id
+                }
+            }).then(natalDate => {
+                return [natalDate];
+            });
+        } else {
+            return that.models.NatalDate.findAll({
+                where: {
+                    userId: user.id
+                }
+            })
+            .each((natalDate) => {
+                if (natalDate.chart) {
+                    return natalDate;
+                }
+                return that.getChart(natalDate)
+                    .then((chart) => {
+                        natalDate.chart = chart;
+                        return natalDate.save();
+                    });
+            });
+        }
     }
 
     create(user, name, date, location, type, primary) {
@@ -31,7 +66,15 @@ export class NatalDateService {
                     type: type
                 };
 
-                return that.models.NatalDate.create(model);
+                return that.models.NatalDate.create(model)
+                    .then((natalDate) => {
+                        return that.getChart(natalDate)
+                            .then((chart) => {
+                                natalDate.chart = chart;
+                                return natalDate.save();
+                            });
+                    })
+                console.log(model);
             });
     }
 
@@ -83,8 +126,12 @@ export class NatalDateService {
                         if (model.type) {
                             natalDate.type = model.type;
                         }
-                        return natalDate.save();
-                    });
+                        return that.getChart(natalDate)
+                            .then((chart) => {
+                                natalDate.chart = chart;
+                                return natalDate.save();
+                            });
+                    })
             });
     }
 }

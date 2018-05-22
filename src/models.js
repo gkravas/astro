@@ -150,6 +150,10 @@ module.exports = function(config) {
             type: Sequelize.BOOLEAN,
             allowNull: false,
             defaultValue: false
+        },
+        chart: {
+            type: Sequelize.JSON,
+            allowNull: true,
         }
     }, {
         version: true,

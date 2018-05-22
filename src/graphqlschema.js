@@ -1,10 +1,12 @@
 import {Sequelize} from 'sequelize';
 import {resolver, attributeFields, typeMapper} from 'graphql-sequelize';
-import {GraphQLType, GraphQLObjectType, GraphQLNonNull, GraphQLList,
+import {GraphQLFloat, GraphQLType, GraphQLObjectType, GraphQLNonNull, GraphQLList,
     GraphQLSchema, GraphQLInt, GraphQLString, GraphQLBoolean, GraphQLInputObjectType} from 'graphql';
+import GraphQLJSON from 'graphql-type-json';
 import {DailyPredictionService} from './services/dailyPredictionService';
 import {NatalDateService} from './services/natalDateService';
 import {UserService} from './services/userService';
+import {_} from 'underscore';
 
 function init(models, config, logger) {
     const dailyPredictionService = new DailyPredictionService(config, models, logger);
@@ -15,6 +17,7 @@ function init(models, config, logger) {
         if (type instanceof Sequelize.GEOMETRY) {
             return GraphQLString;
         }
+        
         //use default for everything else
         return false;
     });
@@ -22,9 +25,15 @@ function init(models, config, logger) {
     let natalDateType = new GraphQLObjectType({
         name: 'NatalDate',
         description: 'A natal date',
-        fields: attributeFields(models.NatalDate, {
+        fields: _.assign(attributeFields(models.NatalDate, {
             only: ['id', 'name', 'date', 'location', 'primary', 'type', 'timezoneMinutesDifference']
-        })
+            }),
+            {
+                chart: {
+                    type: GraphQLJSON,
+                    description: "Natal date's chart"
+                }
+            })
     });
 
     let dailyPlanetAspectExplanationType = new GraphQLObjectType({
@@ -85,22 +94,7 @@ function init(models, config, logger) {
                     },
                 },
                 resolve: (user, { id }, context) => {
-                    if (id) {
-                        return models.NatalDate.findOne({
-                            where: {
-                                id: id,
-                                userId: user.id
-                            }
-                        }).then(natalDate => {
-                            return [natalDate];
-                        })
-                    } else {
-                        return models.NatalDate.findAll({
-                            where: {
-                                userId: user.id
-                            }
-                        })
-                    }
+                    return natalDateService.get(user, id);
                 }
             }
         }
