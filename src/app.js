@@ -53,9 +53,6 @@ app.use(compression())
 app.use(mung.json(
     function transform(body, req, res) {
         res.logBody = body
-        if (res.logBody.password) {
-            res.logBody.password = "******"
-        }
         return body;
     }
 ));
@@ -65,14 +62,18 @@ app.use(morgan(format, {
     stream: {
         write: function(message, encoding){
             const json = JSON.parse(message);
-            
+            var reqBody = JSON.parse(json.reqBody);
+            if (reqBody.password) {
+                reqBody.password = '******';
+                reqBody = JSON.stringify(reqBody)
+            }
             models.Audit.create({
                 referrer: json.referrer,
                 userAgent: json['user-agent'],
                 url: json.url + json['http-version'],
                 method: json.method,
                 status: json.status,
-                request: json.reqBody,
+                request: JSON.stringify(reqBody),
                 response: json.resBody,
                 jwt: json.jwt,
                 userId: json.userId,
