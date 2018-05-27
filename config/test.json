@@ -23,8 +23,8 @@
       "baseURL": "http://localhost:4200"
     },
     "apps": {
-      "android": "1.0.2",
-      "iOS": "1.0.0"
+      "android": "1.1.0",
+      "iOS": "0.0.0"
     },
     "keys": {
         "googleAPIKEY": "AIzaSyBQJ6-LGJw_nsdGuGWahAILcaC4Ij0s1dw"

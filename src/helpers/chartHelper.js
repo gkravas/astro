@@ -57,10 +57,10 @@ module.exports = function(config) {
 
     function getHouse(houses, longitude) {
         let length = houses.length;
-        for (var i = 0; i < length - 1; i++) {
-            let newStart = houses[i].start;
+        for (var i = 0; i < length; i++) {
+            var newStart = houses[i].start;
             if (houses[i].start > houses[i].end) {
-                newStart = 360 - houses[i].start;
+                newStart = Math.abs(360 - houses[i].start) * -1;
             }
             if (longitude >= newStart && longitude < houses[i].end) {
                 return houses[i].index;
@@ -75,13 +75,15 @@ module.exports = function(config) {
             result.push({
                 start: houses[i],
                 end: houses[i + 1],
-                index: i + 1
+                index: i + 1,
+                sign: signs[Math.floor (houses[i] / 30)]
             });
         }
         result.push({
             start: houses[houses.length - 1],
             end: houses[0],
-            index: houses.length
+            index: houses.length,
+            sign: signs[Math.floor (houses[houses.length - 1] / 30)]
         });
         return result;
     };
@@ -106,7 +108,9 @@ module.exports = function(config) {
                     house: getHouse(houses, planet.longitude)
                 }
             }),
-            houses: houses,
+            houses: houses.sort((a, b) => {
+                return a.index - b.index
+            }),
             aspects: chartData.aspects.flatMap(aspect => {
                     return {
                         planet1: aspect.p1.name,
