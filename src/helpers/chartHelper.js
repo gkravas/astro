@@ -94,7 +94,7 @@ module.exports = function(config) {
         return {
             planets: chartData._planets1
                 .filter(planet => {
-                    return planet.longitude;
+                    return planet.name !== 'chiron';
                 })
                 .flatMap(planet => {
                     var lang = planet.longitude;
