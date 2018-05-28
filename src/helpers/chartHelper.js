@@ -58,15 +58,16 @@ module.exports = function(config) {
     function getHouse(houses, longitude) {
         let length = houses.length;
         for (var i = 0; i < length; i++) {
-            var newStart = houses[i].start;
-            if (houses[i].start > houses[i].end) {
-                newStart = Math.abs(360 - houses[i].start) * -1;
-            }
-            if (longitude >= newStart && longitude < houses[i].end) {
+            var start = houses[i].start;
+            var end = houses[i].end;
+            var d = Math.abs(end - start);
+            
+            if ((longitude >= start && longitude < start + d) ||
+                (longitude >= end - d && longitude < end)) {
                 return houses[i].index;
             }
         }
-        return "n/a";
+        return -1;
     };
 
     function parseHouses(houses) {
@@ -91,23 +92,27 @@ module.exports = function(config) {
     function parseNatalDateChartData(chartData) {
         let houses = parseHouses(chartData.houses);
         return {
-            planets: chartData._planets1.flatMap(planet => {
-                var lang = planet.longitude;
-                var house = Math.floor (lang / 30);
-                var lang30 = lang - house * 30;
+            planets: chartData._planets1
+                .filter(planet => {
+                    return planet.longitude;
+                })
+                .flatMap(planet => {
+                    var lang = planet.longitude;
+                    var house = Math.floor (lang / 30);
+                    var lang30 = lang - house * 30;
 
-                return {
-                    name: planet.name,
-                    longitude: planet.longitude,
-                    latitude: planet.latitude,
-                    speed: planet.speed,
-                    angle: lang30,
-                    sign: signs[house],
-                    time: strtime(lang30),
-                    retrogate: planet.speed < 0,
-                    house: getHouse(houses, planet.longitude)
-                }
-            }),
+                    return {
+                        name: planet.name,
+                        longitude: planet.longitude,
+                        latitude: planet.latitude,
+                        speed: planet.speed,
+                        angle: lang30,
+                        sign: signs[house],
+                        time: strtime(lang30),
+                        retrogate: planet.speed < 0,
+                        house: getHouse(houses, planet.longitude)
+                    }
+                }),
             houses: houses.sort((a, b) => {
                 return a.index - b.index
             }),
