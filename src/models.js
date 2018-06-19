@@ -141,10 +141,10 @@ module.exports = function(config) {
         type: {
             allowNull: true,
             type:   Sequelize.ENUM,
-            values: ['male', 'female', 'freeSpirit', 'unknown',''],
+            values: ['male', 'female', 'freeSpirit', 'unknown'],
             defaultValue: 'unknown',
             validate: {
-                isIn: [['male', 'female', 'freeSpirit', 'unknown','']],
+                isIn: [['male', 'female', 'freeSpirit', 'unknown']],
             }
         },
         primary: {
