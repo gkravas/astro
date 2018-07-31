@@ -8,7 +8,6 @@ module.exports = function(config, app, models, emailService, authenticate, logge
     const passport = require('passport');
     const jwt = require('jsonwebtoken');
     const LocalStrategy = require('passport-local').Strategy;
-    const timezoneHelper = require('../helpers/timezoneHelper')(config, logger);
     const ExternalServiceError = require('../errors/externalServiceError.js').ExternalServiceError;
     const ServiceError = require('../errors/serviceError.js').ServiceError;
     const Sequelize = require('sequelize');

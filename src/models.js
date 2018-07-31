@@ -102,6 +102,43 @@ module.exports = function(config) {
         }
     };
 
+    const FirebaseToken = sql.define('firebaseToken', {
+        userId: {
+            type: Sequelize.BIGINT,
+            allowNull: false,
+            unique: 'compositeIndex',
+            primaryKey: true
+        },
+        token: {
+            type: Sequelize.STRING(500),
+            allowNull: false,
+            unique: 'compositeIndex',
+            primaryKey: true
+        },
+        os: {
+            type: Sequelize.ENUM,
+            allowNull: false,
+            unique: 'compositeIndex',
+            primaryKey: true,
+            values: ['android', 'iOS', 'unknown'],
+            defaultValue: 'unknown',
+            validate: {
+                isIn: [['android', 'iOS', 'unknown']],
+            }
+        },
+        language: {
+            type: Sequelize.STRING,
+            allowNull: false
+        }
+    }, {
+        version: true,
+        paranoid: true,
+        timestamps: true
+    });
+
+    User.FirebaseTokens = User.hasMany(FirebaseToken, {foreignKey: 'userId', sourceKey: 'id'});
+    FirebaseToken.User = FirebaseToken.belongsTo(User, {foreignKey: 'userId', targetKey: 'id'});
+
     const NatalDate = sql.define('natalDate', {
         id: { 
             type: Sequelize.BIGINT, 
@@ -331,13 +368,36 @@ module.exports = function(config) {
         paranoid: true,
         timestamps: true
     });
+
+    const Location = sql.define('location', {
+        name: {
+            type: Sequelize.STRING,
+            allowNull: false,
+            unique: true
+        },
+        coordinates: {
+            type: Sequelize.GEOMETRY('POINT'),
+            allowNull: false
+        },
+        timezoneMinutesDifference: {
+            type: Sequelize.INTEGER,
+            allowNull: false
+        }
+    }, {
+        version: true,
+        paranoid: true,
+        timestamps: true
+    });
+
     return {
         sequelize: sql,
         User: User,
+        FirebaseToken: FirebaseToken,
         NatalDate: NatalDate,
         DailyPlanetAspectExplanation: DailyPlanetAspectExplanation,
         DailyPrediction: DailyPrediction,
         Audit: Audit,
-        UserMisc: UserMisc
+        UserMisc: UserMisc,
+        Location: Location
     }
 }

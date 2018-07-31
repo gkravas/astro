@@ -4,7 +4,7 @@ export class UserService {
 
     constructor(config, models, logger) {
         this.models = models;
-        this.timezoneHelper = require('../helpers/timezoneHelper')(config, logger);
+        this.timezoneHelper = require('../helpers/timezoneHelper')(models, logger);
     }
 
     get(userId) {
@@ -31,10 +31,10 @@ export class UserService {
                 }
                 if (location) {
                     return that.timezoneHelper.getTimezone(location)
-                        .then(function(googleLocation) {
-                            user.location = location;
-                            user.coordinates = { type: 'Point', coordinates: googleLocation.coordinates};
-                            user.timezoneMinutesDifference = googleLocation.timezoneMinutesDifference; 
+                        .then(function(loc) {
+                            user.location = loc.name;
+                            user.coordinates = loc.coordinates;
+                            user.timezoneMinutesDifference = loc.timezoneMinutesDifference; 
                             return user;
                         });
                 } else {

@@ -6,7 +6,7 @@ export class NatalDateService {
 
     constructor(config, models, logger) {
         this.models = models;
-        this.timezoneHelper = require('../helpers/timezoneHelper')(config, logger);
+        this.timezoneHelper = require('../helpers/timezoneHelper')(models, logger);
         this.chartHelper = require('../helpers/chartHelper')(config);
     }
 
@@ -59,8 +59,8 @@ export class NatalDateService {
                     userId: user.id,
                     name: name,
                     date: validatedDate,
-                    location: location,
-                    coordinates: { type: 'Point', coordinates: args.coordinates},
+                    location: args.name,
+                    coordinates: args.coordinates,
                     timezoneMinutesDifference: args.timezoneMinutesDifference,
                     primary: primary,
                     type: type
@@ -89,13 +89,14 @@ export class NatalDateService {
                 const timezoneOffset = Utils.formatTimeZoneOffset(args.timezoneMinutesDifference);
                 validatedDate = moment.parseZone(date + timezoneOffset);
 
+                console.log(args);
                 var model = {
                     id: id,
                     userId: userId,
                     name: name,
                     date: validatedDate,
-                    location: location,
-                    coordinates: { type: 'Point', coordinates: args.coordinates},
+                    location: args.name,
+                    coordinates: args.coordinates,
                     timezoneMinutesDifference: args.timezoneMinutesDifference,
                     primary: primary,
                     type: type

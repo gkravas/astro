@@ -1,9 +1,9 @@
 'use strict';
 const Person = require("../chart/js/person").Person
-const Sequelize = require('sequelize');
 import {ExternalServiceError} from '../errors/externalServiceError';
-module.exports = function(config, logger){
-    function getTimezone(city) {
+module.exports = function(models, logger){
+
+    function getLocationByGoogle(city) {
         return Person.getLatLon(city)
             .then(function(coordinates) {
                 return Person.getTimezone(coordinates)
@@ -13,6 +13,33 @@ module.exports = function(config, logger){
                             coordinates: [coordinates.lat, coordinates.lng]
                         });
                     });
+            })
+    }
+
+    function getTimezone(location) {
+        return models.Location.findOne({
+                where: {
+                    name: location
+                }
+            })
+            .then((cachedLocation) => {
+                if (!cachedLocation) {
+                    return getLocationByGoogle(location)
+                        .then((googleLocation) => {
+                            console.log(googleLocation);
+                            return models.Location.create({
+                                name: location,
+                                coordinates: { type: 'Point', coordinates: googleLocation.coordinates},
+                                timezoneMinutesDifference: googleLocation.timezoneMinutesDifference
+                            });
+                        });
+                } else {
+                    return {
+                        name: cachedLocation.name,
+                        coordinates: cachedLocation.coordinates,
+                        timezoneMinutesDifference: cachedLocation.timezoneMinutesDifference
+                    };
+                }
             })
             .catch(function(error) {
                 logger.log({

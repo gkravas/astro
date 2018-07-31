@@ -19,6 +19,7 @@ const graphqlHTTP = require('express-graphql');
 const models = require('./models')(config);
 const graphqlSchema = require('./graphqlschema')(models, config, logger);
 const authController = require('./controllers/authController');
+const firebaseTokenController = require('./controllers/firebaseTokenController');
 const emailService = require('./services/emailService')(config, models, logger);
 const cors = require('cors');
 const mung = require('express-mung');
@@ -91,6 +92,7 @@ app.use(morgan(format, {
 //app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
 
 app.use('/api/v1/auth', authController(config, app, models, emailService, authenticate, logger));
+app.use('/api/v1/notification/token', firebaseTokenController(models, authenticate, logger));
 
 app.post('/graphql', authenticate, graphqlHTTP({
     schema: graphqlSchema,
