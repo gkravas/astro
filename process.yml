@@ -8,3 +8,13 @@ apps:
       NODE_ENV: development
     env_production:
       NODE_ENV: production
+
+  - script   : ./dist/schedulers.js
+    name: astroAPIServerSchedulers
+    instances: 1
+    exec_mode: cluster
+    watch  : true
+    env    :
+      NODE_ENV: development
+    env_production:
+      NODE_ENV: production
