@@ -20,7 +20,7 @@ const texts = [
 const topic = 'daily';
 
 var rule = new schedule.RecurrenceRule();
-rule.dayOfWeek = [0, new schedule.Range(2, 6)];
+rule.dayOfWeek = [0, new schedule.Range(1, 6)];
 rule.hour = 8;
 rule.minute = 0;
 rule.tz = 'Europe/Athens';
