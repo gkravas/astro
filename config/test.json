@@ -4,20 +4,20 @@
     },
     "db": {
         "username": "astro",
-        "password": "mEsWAka3esWad5umA?A#",
+        "password": "",
         "database": "astro",
         "host": "127.0.0.1",
         "dialect": "mysql",
         "version": "5"
     },
     "jwt": {
-      "secret": "yaejpf7EaU7YuRXHPsi9",
+      "secret": "",
       "tokenExpiration": "365d",
       "resetPasswordTokenExpiration": "30m"
     },
     "email": {
-      "username": "hello@astrolucis.gr",
-      "password": "9m7Wu_N-Q9@naB7s"
+      "username": "",
+      "password": ""
     },
     "website": {
       "baseURL": "http://localhost:4200"
@@ -27,11 +27,11 @@
       "iOS": "0.0.0"
     },
     "keys": {
-        "googleAPIKEY": "AIzaSyBQJ6-LGJw_nsdGuGWahAILcaC4Ij0s1dw"
+        "googleAPIKEY": ""
     },
     "fb": {
-      "appId": "1741917992498773",
-      "appSecret": "2a914c83edd54264560f3ad50da71972"
+      "appId": "",
+      "appSecret": ""
     }
   }
   
